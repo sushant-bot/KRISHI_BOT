@@ -52,13 +52,13 @@ docs/              Architecture, API, data contract, and phase documentation
 
 ```mermaid
 flowchart LR
-	User[Farm operator]
-	UI[Vite dashboard\nlocalhost:5173]
-	API[FastAPI REST API\n/api]
-	Services[Application services]
-	Repositories[Repositories]
+	User["Farm operator"]
+	UI["Vite dashboard<br/>localhost:5173"]
+	API["FastAPI REST API<br/>/api"]
+	Services["Application services"]
+	Repositories["Repositories"]
 	DB[(SQLite / PostgreSQL)]
-	Providers[External AI and decision providers]
+	Providers["External AI and decision providers"]
 
 	User --> UI
 	UI -->|HTTP JSON| API
@@ -74,21 +74,21 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-	Sensor[Sensor reading] --> Ingest[POST /api/sensors/readings]
-	Image[Crop image metadata] --> ImageAPI[POST /api/images]
-	ImageAPI --> AI[External AI analysis]
-	AI --> AIAPI[POST /api/ai/analyze]
+	Sensor["Sensor reading"] --> Ingest["POST /api/sensors/readings"]
+	Image["Crop image metadata"] --> ImageAPI["POST /api/images"]
+	ImageAPI --> AI["External AI analysis"]
+	AI --> AIAPI["POST /api/ai/analyze"]
 	Ingest --> Store[(Database)]
 	AIAPI --> Store
-	Store --> Context[GET /api/zones/{zone_id}/decision-context]
-	Context --> Decision[External decision provider]
-	Decision --> DecisionAPI[POST /api/decisions/analyze]
+	Store --> Context["GET /api/zones/{zone_id}/decision-context"]
+	Context --> Decision["External decision provider"]
+	Decision --> DecisionAPI["POST /api/decisions/analyze"]
 	DecisionAPI --> Store
-	Store --> Twin[GET /api/digital-twin]
-	Twin --> Dashboard[Vite dashboard]
-	Store --> Irrigation[GET /api/irrigation/history]
+	Store --> Twin["GET /api/digital-twin"]
+	Twin --> Dashboard["Vite dashboard"]
+	Store --> Irrigation["GET /api/irrigation/history"]
 	Irrigation --> Dashboard
-	Fault[Zero flow while pump is on] --> Alert[Create irrigation alert]
+	Fault["Zero flow while pump is on"] --> Alert["Create irrigation alert"]
 	Alert --> Dashboard
 ```
 
