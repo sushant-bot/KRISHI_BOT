@@ -1,0 +1,57 @@
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.config import get_settings
+from app.routes import (
+    ai,
+    alerts,
+    decisions,
+    digital_twin,
+    farms,
+    health,
+    images,
+    irrigation,
+    sensors,
+    zones,
+)
+from app.services.farm import ConflictError, NotFoundError
+
+settings = get_settings()
+app = FastAPI(title=settings.app_name, version="0.1.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origin_list,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.exception_handler(NotFoundError)
+async def not_found_handler(request: Request, exc: NotFoundError) -> JSONResponse:
+    return JSONResponse(
+        status_code=404, content={"error": {"code": "NOT_FOUND", "message": str(exc)}}
+    )
+
+
+@app.exception_handler(ConflictError)
+async def conflict_handler(request: Request, exc: ConflictError) -> JSONResponse:
+    return JSONResponse(
+        status_code=409, content={"error": {"code": "CONFLICT", "message": str(exc)}}
+    )
+
+
+app.include_router(health.router, prefix="/api")
+app.include_router(farms.router, prefix="/api")
+app.include_router(zones.router, prefix="/api")
+app.include_router(sensors.router, prefix="/api")
+app.include_router(irrigation.router, prefix="/api")
+app.include_router(images.router, prefix="/api")
+app.include_router(images.zone_router, prefix="/api")
+app.include_router(ai.router, prefix="/api")
+app.include_router(ai.zone_router, prefix="/api")
+app.include_router(decisions.router, prefix="/api")
+app.include_router(decisions.zone_router, prefix="/api")
+app.include_router(alerts.router, prefix="/api")
+app.include_router(digital_twin.router, prefix="/api")

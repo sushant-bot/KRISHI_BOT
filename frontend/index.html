@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroVisor Edge — Farm Monitoring Dashboard</title>
+  <meta name="description" content="AgroVisor Edge is a smart farm monitoring and precision irrigation dashboard for SIH 2026. Monitor farms, zones, sensors, irrigation, and AI crop analysis in real-time." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='80'%3E🌾%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <!-- ============ TOP NAVIGATION ============ -->
+  <nav id="main-nav" class="nav">
+    <div class="nav-inner">
+      <div style="display: flex; align-items: center; gap: 2rem;">
+        <a href="#" class="nav-brand">
+          <span class="material-symbols-outlined">eco</span>
+          AgroVisor Edge
+        </a>
+        <ul class="nav-links">
+          <li><a href="#dashboard" class="active">Dashboard</a></li>
+          <li><a href="#farm-overview">Farms</a></li>
+          <li><a href="#insights-section">Irrigation</a></li>
+          <li><a href="#twin-section">Digital Twin</a></li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <div class="api-key-input-wrap">
+          <span class="material-symbols-outlined">key</span>
+          <input id="api-key-input" class="api-key-input" type="password" placeholder="API Key..." autocomplete="off" />
+        </div>
+        <div class="connection-indicator">
+          <span id="connection-dot" class="connection-dot"></span>
+          <span id="connection-label" style="color: var(--outline);">Checking...</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ============ HERO SECTION ============ -->
+    <section id="dashboard" class="hero">
+      <div class="hero-bg">
+        <img
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80"
+          alt="Lush green farmland at golden hour"
+        />
+        <div class="overlay-darken"></div>
+        <div class="overlay-gradient"></div>
+      </div>
+      <div class="hero-content">
+        <h1 class="text-display-xl animate-in">Monitor. Irrigate. Thrive.</h1>
+        <p class="text-body-lg animate-in animate-delay-1">
+          Real-time farm monitoring and precision irrigation powered by edge AI.
+          Track soil conditions, manage irrigation, and detect crop health — all in one place.
+        </p>
+        <div class="hero-actions animate-in animate-delay-2">
+          <button class="btn-primary" onclick="document.getElementById('farm-overview').scrollIntoView({behavior:'smooth'})">
+            VIEW DASHBOARD
+          </button>
+          <button class="btn-outline" onclick="document.getElementById('twin-section').scrollIntoView({behavior:'smooth'})">
+            DIGITAL TWIN
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FARM OVERVIEW — BENTO GRID ============ -->
+    <section id="farm-overview" class="section" style="max-width: var(--container-max); margin: 0 auto;">
+      <div class="section-header animate-in">
+        <h2 class="text-headline-lg">Farm Overview</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="bento-grid">
+        <!-- Main Feature: Primary Farm -->
+        <div id="farm-feature" class="bento-card bento-col-8 feature-card animate-in animate-delay-1">
+          <!-- Rendered by JS -->
+          <div class="empty-state" style="width: 100%; padding: 4rem;">
+            <span class="material-symbols-outlined">agriculture</span>
+            <p>Loading farm data...</p>
+          </div>
+        </div>
+
+        <!-- Zone Cards (rendered by JS) -->
+        <div id="zone-cards" class="bento-col-4" style="display: contents;">
+          <!-- Rendered by JS — up to 2 zone cards -->
+          <div class="bento-card bento-col-4 stat-card">
+            <div class="empty-state">
+              <div class="skeleton" style="width: 2rem; height: 2rem; margin-bottom: 1rem;"></div>
+              <div class="skeleton" style="width: 60%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+              <div class="skeleton" style="width: 80%; height: 1rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert / Quote Block -->
+        <div id="alert-quote" class="bento-card bento-col-8 quote-card animate-in animate-delay-3">
+          <div class="quote-card-inner">
+            <p class="quote-text">"Loading latest alerts..."</p>
+            <span class="quote-source">— AgroVisor Edge</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SMART INSIGHTS — IRRIGATION + DECISION CONTEXT ============ -->
+    <section id="insights-section" class="insights-section">
+      <div class="insights-inner">
+        <!-- Left: Irrigation Command Card -->
+        <div class="insights-left">
+          <img
+            class="insights-left-bg"
+            src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&q=80"
+            alt="Irrigation sprinklers on a farm field"
+          />
+          <div class="overlay-left"></div>
+          <div class="overlay-vignette"></div>
+
+          <div class="floating-card">
+            <div class="floating-card-header">
+              <div class="floating-card-header-left">
+                <div class="floating-card-dot"></div>
+                <h4>Irrigation Control</h4>
+              </div>
+            </div>
+            <div class="floating-card-body">
+              <form id="irrigation-form">
+                <div class="form-grid" style="gap: 1.5rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="irrigation-zone-select">Target Zone</label>
+                    <select id="irrigation-zone-select" class="form-select" required>
+                      <option value="">Loading zones...</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="irrigation-action-select">Action</label>
+                    <select id="irrigation-action-select" class="form-select" required>
+                      <option value="START">START</option>
+                      <option value="STOP">STOP</option>
+                    </select>
+                  </div>
+                  <div class="form-group full-width">
+                    <label class="form-label" for="irrigation-target-input">Target Water (Liters) — optional</label>
+                    <input id="irrigation-target-input" class="form-input" type="number" min="0" step="0.1" placeholder="e.g. 50.0" />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="reset" class="btn-ghost">Reset</button>
+                  <button id="irrigation-submit-btn" type="submit" class="btn-pill-filled">Send Command</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Decision Intelligence -->
+        <div class="insights-right">
+          <div class="insights-right-inner">
+            <div class="insights-right-header">
+              <span class="material-symbols-outlined">psychology</span>
+              <h2 class="text-headline-lg" style="font-size: 1.75rem;">Decision Intelligence</h2>
+            </div>
+            <p class="text-body-md" style="color: #a3a3a3; margin-bottom: 2.5rem; line-height: 1.7;">
+              View the latest sensor readings, AI crop analysis, and active irrigation events
+              aggregated for the selected zone. This context drives precision farming decisions.
+            </p>
+            <button class="btn-pill" onclick="loadDashboardRefresh()" style="margin-bottom: 3rem;">
+              Refresh Context
+            </button>
+
+            <!-- Reveal List -->
+            <div class="reveal-list">
+              <!-- Sensor Context -->
+              <div class="reveal-item active">
+                <div class="reveal-bar"></div>
+                <h3>Sensor Readings</h3>
+                <div class="reveal-content">
+                  <div class="reveal-content-inner" id="reveal-sensor-data">
+                    <p>Loading sensor context...</p>
+                  </div>
+                </div>
+              </div>
+              <!-- AI Analysis -->
+              <div class="reveal-item">
+                <div class="reveal-bar"></div>
+                <h3>AI Crop Analysis</h3>
+                <div class="reveal-content">
+                  <div class="reveal-content-inner" id="reveal-ai-data">
+                    <p>Loading AI context...</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Irrigation Status -->
+              <div class="reveal-item">
+                <div class="reveal-bar"></div>
+                <h3>Irrigation Status</h3>
+                <div class="reveal-content">
+                  <div class="reveal-content-inner" id="reveal-irrigation-data">
+                    <p>Loading irrigation context...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DIGITAL TWIN SECTION ============ -->
+    <section id="twin-section" class="twin-section" style="max-width: var(--container-max); margin: 0 auto;">
+      <div class="section-header animate-in">
+        <h2 class="text-headline-lg">Digital Twin</h2>
+        <div class="divider"></div>
+        <p class="text-body-md" style="color: var(--on-surface-variant); margin-top: 1rem; max-width: 36rem;">
+          Aggregated real-time view of every zone — sensor state, irrigation, risks, alerts, and health scores in one unified model.
+        </p>
+      </div>
+
+      <div id="twin-cards" class="twin-grid">
+        <!-- Rendered by JS -->
+        <div class="twin-card">
+          <div class="skeleton" style="height: 100%; min-height: 200px;"></div>
+        </div>
+        <div class="twin-card">
+          <div class="skeleton" style="height: 100%; min-height: 200px;"></div>
+        </div>
+        <div class="twin-card">
+          <div class="skeleton" style="height: 100%; min-height: 200px;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">AgroVisor Edge</div>
+        <div class="footer-copy">© 2026 AgroVisor Edge · SIH26180 · Precision Agriculture Platform</div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="http://localhost:8000/docs" target="_blank">API Docs</a></li>
+        <li><a href="#">Health</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- App script -->
+  <script type="module" src="/src/main.js"></script>
+  <script>
+    // Global helper for refresh button
+    window.loadDashboardRefresh = async function() {
+      const { loadDashboard } = await import('/src/main.js');
+      // Force a re-check
+      location.reload();
+    };
+  </script>
+</body>
+</html>
