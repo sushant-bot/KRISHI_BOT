@@ -3,263 +3,1079 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgroVisor Edge — Farm Monitoring Dashboard</title>
-  <meta name="description" content="AgroVisor Edge is a smart farm monitoring and precision irrigation dashboard for SIH 2026. Monitor farms, zones, sensors, irrigation, and AI crop analysis in real-time." />
+  <title>AgroVisor Edge — Mobile Edge-AI Farm Intelligence & Precision Irrigation</title>
+  <meta name="description" content="AgroVisor Edge: Complete farm monitoring, edge-AI crop vision, precision irrigation, and Digital Twin platform for SIH 2026." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='80'%3E🌾%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="/src/style.css" />
+  <script>
+    (function() {
+      try {
+        var stored = localStorage.getItem('agrovisor-theme-preference');
+        var theme = stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
-  <!-- ============ TOP NAVIGATION ============ -->
-  <nav id="main-nav" class="nav">
-    <div class="nav-inner">
-      <div style="display: flex; align-items: center; gap: 2rem;">
-        <a href="#" class="nav-brand">
-          <span class="material-symbols-outlined">eco</span>
-          AgroVisor Edge
-        </a>
-        <ul class="nav-links">
-          <li><a href="#dashboard" class="active">Dashboard</a></li>
-          <li><a href="#farm-overview">Farms</a></li>
-          <li><a href="#insights-section">Irrigation</a></li>
-          <li><a href="#twin-section">Digital Twin</a></li>
-        </ul>
-      </div>
-      <div class="nav-right">
-        <div class="api-key-input-wrap">
-          <span class="material-symbols-outlined">key</span>
-          <input id="api-key-input" class="api-key-input" type="password" placeholder="API Key..." autocomplete="off" />
+  <!-- ============ PRIMARY KINETIC NAVIGATION HEADER ============ -->
+  <header id="site-header" class="site-header-wrapper">
+    <div class="nav-row">
+      <!-- Compact AgroVisor Branding -->
+      <a href="#overview" class="nav-brand-compact" onclick="navigateTo('overview', event)">
+        <span class="material-symbols-outlined brand-icon">eco</span>
+        <div class="brand-text-col">
+          <span class="brand-title">AGROVISOR EDGE</span>
+          <span class="brand-subtitle">FARM INTELLIGENCE SYSTEM</span>
+        </div>
+      </a>
+
+      <!-- Quick Context Bar (Active View + Farm Picker + Backend Health) -->
+      <div class="nav-context-bar">
+        <select id="farm-selector" class="farm-select-nav" aria-label="Select Operating Farm">
+          <option value="">Loading farm...</option>
+        </select>
+        <div class="rover-status-pill" title="Autonomous rover hardware demo mode.">
+          <span class="rover-dot"></span>
+          <span>Rover: Demo</span>
         </div>
         <div class="connection-indicator">
           <span id="connection-dot" class="connection-dot"></span>
-          <span id="connection-label" style="color: var(--outline);">Checking...</span>
+          <span id="connection-label" style="color: var(--outline);">127.0.0.1:8001</span>
         </div>
+      </div>
+
+      <!-- Right Controls: Single MENU + button and Light/Dark Toggle -->
+      <div class="nav-row__right">
+        <button type="button" class="nav-close-btn" id="kinetic-menu-toggle-btn" onclick="toggleKineticMenu()" aria-label="Toggle navigation menu">
+          <div class="menu-button-text">
+            <p class="p-large">Menu</p>
+            <p class="p-large">Close</p>
+          </div>
+          <div class="icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none" class="menu-button-icon">
+              <path d="M7.33333 16L7.33333 -3.2055e-07L8.66667 -3.78832e-07L8.66667 16L7.33333 16Z" fill="currentColor"></path>
+              <path d="M16 8.66667L-2.62269e-07 8.66667L-3.78832e-07 7.33333L16 7.33333L16 8.66667Z" fill="currentColor"></path>
+              <path d="M6 7.33333L7.33333 7.33333L7.33333 6C7.33333 6.73637 6.73638 7.33333 6 7.33333Z" fill="currentColor"></path>
+              <path d="M10 7.33333L8.66667 7.33333L8.66667 6C8.66667 6.73638 9.26362 7.33333 10 7.33333Z" fill="currentColor"></path>
+              <path d="M6 8.66667L7.33333 8.66667L7.33333 10C7.33333 9.26362 6.73638 8.66667 6 8.66667Z" fill="currentColor"></path>
+              <path d="M10 8.66667L8.66667 8.66667L8.66667 10C8.66667 9.26362 9.26362 8.66667 10 8.66667Z" fill="currentColor"></path>
+            </svg>
+          </div>
+        </button>
+
+        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark mode" title="Toggle Light/Dark Theme">
+          <span class="theme-toggle-glyph">◐</span>
+        </button>
       </div>
     </div>
-  </nav>
+  </header>
 
-  <main>
-    <!-- ============ HERO SECTION ============ -->
-    <section id="dashboard" class="hero">
-      <div class="hero-bg">
-        <img
-          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80"
-          alt="Lush green farmland at golden hour"
-        />
-        <div class="overlay-darken"></div>
-        <div class="overlay-gradient"></div>
-      </div>
-      <div class="hero-content">
-        <h1 class="text-display-xl animate-in">Monitor. Irrigate. Thrive.</h1>
-        <p class="text-body-lg animate-in animate-delay-1">
-          Real-time farm monitoring and precision irrigation powered by edge AI.
-          Track soil conditions, manage irrigation, and detect crop health — all in one place.
-        </p>
-        <div class="hero-actions animate-in animate-delay-2">
-          <button class="btn-primary" onclick="document.getElementById('farm-overview').scrollIntoView({behavior:'smooth'})">
-            VIEW DASHBOARD
-          </button>
-          <button class="btn-outline" onclick="document.getElementById('twin-section').scrollIntoView({behavior:'smooth'})">
-            DIGITAL TWIN
-          </button>
-        </div>
-      </div>
-    </section>
+  <!-- ============ FULLSCREEN KINETIC NAVIGATION OVERLAY ============ -->
+  <section class="fullscreen-menu-container" id="kinetic-menu-container">
+    <div data-nav="closed" class="nav-overlay-wrapper" id="kinetic-nav-wrapper">
+      <div class="overlay" onclick="closeKineticMenu()"></div>
+      <nav class="menu-content" id="kinetic-menu-content">
+        <div class="menu-bg">
+          <div class="backdrop-layer first"></div>
+          <div class="backdrop-layer second"></div>
+          <div class="backdrop-layer"></div>
 
-    <!-- ============ FARM OVERVIEW — BENTO GRID ============ -->
-    <section id="farm-overview" class="section" style="max-width: var(--container-max); margin: 0 auto;">
-      <div class="section-header animate-in">
-        <h2 class="text-headline-lg">Farm Overview</h2>
-        <div class="divider"></div>
-      </div>
+          <!-- Subtle AgroVisor Ambient Vector Shapes (Emerald / Cyan Low-Opacity) -->
+          <div class="ambient-background-shapes">
+            <!-- Shape 1: Radar Telemetry (Overview) -->
+            <svg class="bg-shape bg-shape-1" viewBox="0 0 500 500" fill="none">
+              <circle class="shape-element" cx="250" cy="250" r="180" stroke="rgba(74, 222, 128, 0.08)" stroke-width="2" stroke-dasharray="8 6"/>
+              <circle class="shape-element" cx="250" cy="250" r="120" stroke="rgba(96, 165, 250, 0.08)" stroke-width="1.5"/>
+              <circle class="shape-element" cx="250" cy="250" r="60" fill="rgba(74, 222, 128, 0.04)"/>
+              <line class="shape-element" x1="70" y1="250" x2="430" y2="250" stroke="rgba(74, 222, 128, 0.06)" stroke-width="1"/>
+              <line class="shape-element" x1="250" y1="70" x2="250" y2="430" stroke="rgba(74, 222, 128, 0.06)" stroke-width="1"/>
+            </svg>
 
-      <div class="bento-grid">
-        <!-- Main Feature: Primary Farm -->
-        <div id="farm-feature" class="bento-card bento-col-8 feature-card animate-in animate-delay-1">
-          <!-- Rendered by JS -->
-          <div class="empty-state" style="width: 100%; padding: 4rem;">
-            <span class="material-symbols-outlined">agriculture</span>
-            <p>Loading farm data...</p>
+            <!-- Shape 2: Cyber-Physical Zone Grid (Digital Twin) -->
+            <svg class="bg-shape bg-shape-2" viewBox="0 0 500 500" fill="none">
+              <rect class="shape-element" x="80" y="80" width="140" height="140" rx="8" stroke="rgba(74, 222, 128, 0.09)" stroke-width="1.5"/>
+              <rect class="shape-element" x="260" y="80" width="160" height="140" rx="8" stroke="rgba(96, 165, 250, 0.09)" stroke-width="1.5"/>
+              <rect class="shape-element" x="140" y="260" width="220" height="160" rx="8" stroke="rgba(74, 222, 128, 0.09)" stroke-width="1.5"/>
+              <path class="shape-element" d="M150 220 L150 260 M340 220 L340 260" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1.5" stroke-dasharray="4 4"/>
+            </svg>
+
+            <!-- Shape 3: Soil Strata & Root Field (Zones) -->
+            <svg class="bg-shape bg-shape-3" viewBox="0 0 500 500" fill="none">
+              <path class="shape-element" d="M60 180 Q160 140, 250 180 T 440 180" stroke="rgba(74, 222, 128, 0.1)" stroke-width="2" fill="none"/>
+              <path class="shape-element" d="M60 260 Q160 220, 250 260 T 440 260" stroke="rgba(96, 165, 250, 0.08)" stroke-width="1.5" fill="none"/>
+              <path class="shape-element" d="M60 340 Q160 300, 250 340 T 440 340" stroke="rgba(74, 222, 128, 0.06)" stroke-width="1" fill="none"/>
+            </svg>
+
+            <!-- Shape 4: Optical Reticle & Inspection Crosshair (AI Analysis) -->
+            <svg class="bg-shape bg-shape-4" viewBox="0 0 500 500" fill="none">
+              <circle class="shape-element" cx="250" cy="250" r="140" stroke="rgba(96, 165, 250, 0.12)" stroke-width="1.5"/>
+              <path class="shape-element" d="M250 70 L250 150 M250 350 L250 430 M70 250 L150 250 M350 250 L430 250" stroke="rgba(96, 165, 250, 0.12)" stroke-width="2"/>
+              <circle class="shape-element" cx="250" cy="250" r="6" fill="rgba(74, 222, 128, 0.3)"/>
+            </svg>
+
+            <!-- Shape 5: Hydro Flow Streamlines (Smart Irrigation) -->
+            <svg class="bg-shape bg-shape-5" viewBox="0 0 500 500" fill="none">
+              <path class="shape-element" d="M100 120 C180 200, 220 300, 400 380" stroke="rgba(96, 165, 250, 0.15)" stroke-width="3" fill="none"/>
+              <path class="shape-element" d="M140 80 C220 180, 260 280, 440 340" stroke="rgba(74, 222, 128, 0.12)" stroke-width="2" fill="none"/>
+              <circle class="shape-element" cx="200" cy="180" r="18" fill="rgba(96, 165, 250, 0.06)"/>
+            </svg>
+
+            <!-- Shape 6: Incident Warning Arcs (Alerts & Advisory) -->
+            <svg class="bg-shape bg-shape-6" viewBox="0 0 500 500" fill="none">
+              <path class="shape-element" d="M160 360 L250 160 L340 360 Z" stroke="rgba(251, 191, 36, 0.15)" stroke-width="2" fill="none"/>
+              <circle class="shape-element" cx="250" cy="310" r="6" fill="rgba(251, 191, 36, 0.25)"/>
+              <line class="shape-element" x1="250" y1="220" x2="250" y2="280" stroke="rgba(251, 191, 36, 0.25)" stroke-width="3"/>
+            </svg>
+
+            <!-- Shape 7: Longitudinal Telemetry Waveform (Analytics) -->
+            <svg class="bg-shape bg-shape-7" viewBox="0 0 500 500" fill="none">
+              <polyline class="shape-element" points="60,340 120,280 180,310 240,190 300,240 360,140 420,180" stroke="rgba(74, 222, 128, 0.15)" stroke-width="2.5" fill="none"/>
+              <circle class="shape-element" cx="240" cy="190" r="5" fill="rgba(74, 222, 128, 0.4)"/>
+              <circle class="shape-element" cx="360" cy="140" r="5" fill="rgba(96, 165, 250, 0.4)"/>
+            </svg>
           </div>
         </div>
 
-        <!-- Zone Cards (rendered by JS) -->
-        <div id="zone-cards" class="bento-col-4" style="display: contents;">
-          <!-- Rendered by JS — up to 2 zone cards -->
-          <div class="bento-card bento-col-4 stat-card">
-            <div class="empty-state">
-              <div class="skeleton" style="width: 2rem; height: 2rem; margin-bottom: 1rem;"></div>
-              <div class="skeleton" style="width: 60%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
-              <div class="skeleton" style="width: 80%; height: 1rem;"></div>
-            </div>
+        <!-- The 7 Story Flow Navigation Links -->
+        <div class="menu-content-wrapper">
+          <div style="margin-bottom: 2rem;">
+            <span class="text-label-sm" style="color: var(--agro-green); letter-spacing: 0.12em; display: block; margin-bottom: 0.25rem;">
+              PRECISION AGRICULTURE WORKFLOW
+            </span>
+            <span style="font-size: 0.8125rem; color: var(--outline);">Observe → Understand → Decide → Act → Verify → Learn</span>
           </div>
-        </div>
 
-        <!-- Alert / Quote Block -->
-        <div id="alert-quote" class="bento-card bento-col-8 quote-card animate-in animate-delay-3">
-          <div class="quote-card-inner">
-            <p class="quote-text">"Loading latest alerts..."</p>
-            <span class="quote-source">— AgroVisor Edge</span>
-          </div>
+          <ul class="menu-list">
+            <li class="menu-list-item" data-shape="1">
+              <a href="#overview" class="nav-link w-inline-block" onclick="navigateTo('overview', event)">
+                <span class="nav-item-num">01</span>
+                <p class="nav-link-text">Overview</p>
+                <span class="nav-item-sub">Operational KPIs & Map</span>
+              </a>
+            </li>
+            <li class="menu-list-item" data-shape="2">
+              <a href="#digital-twin" class="nav-link w-inline-block" onclick="navigateTo('digital-twin', event)">
+                <span class="nav-item-num">02</span>
+                <p class="nav-link-text">Digital Twin</p>
+                <span class="nav-item-sub">Cyber-Physical Model</span>
+              </a>
+            </li>
+            <li class="menu-list-item" data-shape="3">
+              <a href="#zones" class="nav-link w-inline-block" onclick="navigateTo('zones', event)">
+                <span class="nav-item-num">03</span>
+                <p class="nav-link-text">Zones</p>
+                <span class="nav-item-sub">Micro-Climate Telemetry</span>
+              </a>
+            </li>
+            <li class="menu-list-item" data-shape="4">
+              <a href="#ai-analysis" class="nav-link w-inline-block" onclick="navigateTo('ai-analysis', event)">
+                <span class="nav-item-num">04</span>
+                <p class="nav-link-text">AI Analysis</p>
+                <span class="nav-item-sub">Crop Vision & Pathology</span>
+              </a>
+            </li>
+            <li class="menu-list-item" data-shape="5">
+              <a href="#irrigation" class="nav-link w-inline-block" onclick="navigateTo('irrigation', event)">
+                <span class="nav-item-num">05</span>
+                <p class="nav-link-text">Smart Irrigation</p>
+                <span class="nav-item-sub">Closed-Loop Feedback</span>
+              </a>
+            </li>
+            <li class="menu-list-item" data-shape="6">
+              <a href="#alerts" class="nav-link w-inline-block" onclick="navigateTo('alerts', event)">
+                <span class="nav-item-num">06</span>
+                <p class="nav-link-text">Alerts & Advisory</p>
+                <span class="nav-item-sub">Incident Resolution</span>
+              </a>
+            </li>
+            <li class="menu-list-item" data-shape="7">
+              <a href="#analytics" class="nav-link w-inline-block" onclick="navigateTo('analytics', event)">
+                <span class="nav-item-num">07</span>
+                <p class="nav-link-text">Analytics</p>
+                <span class="nav-item-sub">Longitudinal Telemetry</span>
+              </a>
+            </li>
+          </ul>
         </div>
-      </div>
-    </section>
+      </nav>
+    </div>
+  </section>
 
-    <!-- ============ SMART INSIGHTS — IRRIGATION + DECISION CONTEXT ============ -->
-    <section id="insights-section" class="insights-section">
-      <div class="insights-inner">
-        <!-- Left: Irrigation Command Card -->
-        <div class="insights-left">
+  <main style="padding-top: 5rem; min-height: 85vh;">
+
+    <!-- ============================================================
+         1. VIEW: OVERVIEW (Farm Operations & Hero Digital Twin)
+         ============================================================ -->
+    <div id="view-overview" class="page-view active">
+      <!-- Prototype Landing Hero -->
+      <section class="hero" style="height: 48vh; min-height: 380px;">
+        <div class="hero-bg">
           <img
-            class="insights-left-bg"
-            src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&q=80"
-            alt="Irrigation sprinklers on a farm field"
+            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80"
+            alt="Lush green farmland at golden hour"
           />
-          <div class="overlay-left"></div>
-          <div class="overlay-vignette"></div>
-
-          <div class="floating-card">
-            <div class="floating-card-header">
-              <div class="floating-card-header-left">
-                <div class="floating-card-dot"></div>
-                <h4>Irrigation Control</h4>
-              </div>
-            </div>
-            <div class="floating-card-body">
-              <form id="irrigation-form">
-                <div class="form-grid" style="gap: 1.5rem;">
-                  <div class="form-group">
-                    <label class="form-label" for="irrigation-zone-select">Target Zone</label>
-                    <select id="irrigation-zone-select" class="form-select" required>
-                      <option value="">Loading zones...</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="irrigation-action-select">Action</label>
-                    <select id="irrigation-action-select" class="form-select" required>
-                      <option value="START">START</option>
-                      <option value="STOP">STOP</option>
-                    </select>
-                  </div>
-                  <div class="form-group full-width">
-                    <label class="form-label" for="irrigation-target-input">Target Water (Liters) — optional</label>
-                    <input id="irrigation-target-input" class="form-input" type="number" min="0" step="0.1" placeholder="e.g. 50.0" />
-                  </div>
-                </div>
-                <div class="form-actions">
-                  <button type="reset" class="btn-ghost">Reset</button>
-                  <button id="irrigation-submit-btn" type="submit" class="btn-pill-filled">Send Command</button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <div class="overlay-darken"></div>
+          <div class="overlay-gradient"></div>
         </div>
-
-        <!-- Right: Decision Intelligence -->
-        <div class="insights-right">
-          <div class="insights-right-inner">
-            <div class="insights-right-header">
-              <span class="material-symbols-outlined">psychology</span>
-              <h2 class="text-headline-lg" style="font-size: 1.75rem;">Decision Intelligence</h2>
-            </div>
-            <p class="text-body-md" style="color: #a3a3a3; margin-bottom: 2.5rem; line-height: 1.7;">
-              View the latest sensor readings, AI crop analysis, and active irrigation events
-              aggregated for the selected zone. This context drives precision farming decisions.
-            </p>
-            <button class="btn-pill" onclick="loadDashboardRefresh()" style="margin-bottom: 3rem;">
-              Refresh Context
+        <div class="hero-content" style="margin-top: 2rem;">
+          <span class="text-label-sm" style="color: var(--agro-green); letter-spacing: 0.12em; display: block; margin-bottom: 0.75rem;">
+            MOBILE EDGE-AI FARM INTELLIGENCE & PRECISION IRRIGATION
+          </span>
+          <h1 class="text-display-xl animate-in" style="font-size: 3.5rem; margin-bottom: 1rem;">
+            AgroVisor Edge
+          </h1>
+          <p class="text-body-lg animate-in animate-delay-1" style="max-width: 38rem; margin-bottom: 2rem;">
+            Autonomous crop monitoring, edge vision diagnosis, closed-loop irrigation verification, and cyber-physical Digital Twin aggregation.
+          </p>
+          <div class="hero-actions animate-in animate-delay-2">
+            <button class="btn-pill-filled" onclick="document.getElementById('operational-overview').scrollIntoView({behavior:'smooth'})">
+              Enter Dashboard
             </button>
+            <button class="btn-outline" onclick="navigateTo('digital-twin')">
+              Open Digital Twin
+            </button>
+          </div>
+        </div>
+      </section>
 
-            <!-- Reveal List -->
-            <div class="reveal-list">
-              <!-- Sensor Context -->
-              <div class="reveal-item active">
-                <div class="reveal-bar"></div>
-                <h3>Sensor Readings</h3>
-                <div class="reveal-content">
-                  <div class="reveal-content-inner" id="reveal-sensor-data">
-                    <p>Loading sensor context...</p>
-                  </div>
-                </div>
-              </div>
-              <!-- AI Analysis -->
-              <div class="reveal-item">
-                <div class="reveal-bar"></div>
-                <h3>AI Crop Analysis</h3>
-                <div class="reveal-content">
-                  <div class="reveal-content-inner" id="reveal-ai-data">
-                    <p>Loading AI context...</p>
-                  </div>
-                </div>
-              </div>
-              <!-- Irrigation Status -->
-              <div class="reveal-item">
-                <div class="reveal-bar"></div>
-                <h3>Irrigation Status</h3>
-                <div class="reveal-content">
-                  <div class="reveal-content-inner" id="reveal-irrigation-data">
-                    <p>Loading irrigation context...</p>
-                  </div>
-                </div>
-              </div>
+      <!-- Main Operational Dashboard -->
+      <section id="operational-overview" class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 3rem;">
+        <!-- Header: Green Valley Farm ● System Online -->
+        <div class="view-header">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              AGROVISOR EDGE · FARM INTELLIGENCE PLATFORM
+            </span>
+            <h2 id="overview-farm-title">Green Valley Farm</h2>
+            <p style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="connection-dot connected" style="width: 8px; height: 8px;"></span>
+              <span style="color: var(--agro-green); font-weight: 600;">System Online</span>
+              <span style="color: var(--outline);">· Nashik Agro Valley, Maharashtra</span>
+            </p>
+          </div>
+          <div class="view-header-actions">
+            <button class="btn-outline" onclick="loadDashboard()">
+              <span class="material-symbols-outlined" style="font-size: 0.875rem; vertical-align: middle; margin-right: 0.25rem;">refresh</span>
+              Sync Farm Data
+            </button>
+            <button class="btn-pill-filled" onclick="navigateTo('irrigation')">
+              Control Irrigation
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 Primary KPIs -->
+        <div class="kpi-grid">
+          <!-- KPI 1: Farm Health -->
+          <div class="kpi-card animate-in animate-delay-1">
+            <div class="kpi-label">
+              <span>Farm Health</span>
+              <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-green);">vital_signs</span>
+            </div>
+            <div class="kpi-value" id="kpi-health-score">72<span style="font-size: 1.125rem; color: var(--outline);"> / 100</span></div>
+            <div class="kpi-sub">
+              <span class="twin-badge healthy" style="padding: 0.1rem 0.5rem;">Optimal Target</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: Zones Monitored -->
+          <div class="kpi-card animate-in animate-delay-1">
+            <div class="kpi-label">
+              <span>Zones</span>
+              <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-blue);">grid_view</span>
+            </div>
+            <div class="kpi-value" id="kpi-zones-count">3 / 3</div>
+            <div class="kpi-sub">
+              <span style="color: var(--agro-green);">● All Monitored</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: Water Used Today -->
+          <div class="kpi-card animate-in animate-delay-2">
+            <div class="kpi-label">
+              <span>Water Used</span>
+              <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-blue);">water_drop</span>
+            </div>
+            <div class="kpi-value" id="kpi-water-used">10.0<span style="font-size: 1.125rem; color: var(--outline);"> L</span></div>
+            <div class="kpi-sub">
+              <span>Delivered Today</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: Alerts -->
+          <div class="kpi-card animate-in animate-delay-2" style="cursor: pointer;" onclick="navigateTo('alerts')">
+            <div class="kpi-label">
+              <span>Alerts</span>
+              <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-amber);">warning</span>
+            </div>
+            <div class="kpi-value" id="kpi-alerts-count" style="color: var(--agro-amber);">1</div>
+            <div class="kpi-sub">
+              <span style="color: var(--agro-amber);">⚠ High Severity</span>
+            </div>
+          </div>
+
+          <!-- KPI 5: Irrigation Status -->
+          <div class="kpi-card animate-in animate-delay-3" style="cursor: pointer;" onclick="navigateTo('irrigation')">
+            <div class="kpi-label">
+              <span>Irrigation</span>
+              <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-green);">valve</span>
+            </div>
+            <div class="kpi-value" id="kpi-irrig-status" style="font-size: 1.75rem; color: var(--agro-green);">ACTIVE</div>
+            <div class="kpi-sub">
+              <span id="kpi-irrig-sub">Zone B1 · 2.4 L/min</span>
             </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ============ DIGITAL TWIN SECTION ============ -->
-    <section id="twin-section" class="twin-section" style="max-width: var(--container-max); margin: 0 auto;">
-      <div class="section-header animate-in">
-        <h2 class="text-headline-lg">Digital Twin</h2>
-        <div class="divider"></div>
-        <p class="text-body-md" style="color: var(--on-surface-variant); margin-top: 1rem; max-width: 36rem;">
-          Aggregated real-time view of every zone — sensor state, irrigation, risks, alerts, and health scores in one unified model.
-        </p>
-      </div>
+        <!-- HERO COMPONENT: Large Digital Twin Map -->
+        <div class="twin-map-hero animate-in animate-delay-2">
+          <div class="twin-map-header">
+            <div>
+              <div class="twin-map-title">
+                <span class="material-symbols-outlined" style="color: var(--agro-green);">hub</span>
+                FARM DIGITAL TWIN
+              </div>
+              <p class="text-body-md" style="color: var(--on-surface-variant); font-size: 0.875rem;">
+                Live spatial map representing physical telemetry and edge intelligence. Click any zone to inspect deep-dive state.
+              </p>
+            </div>
+            <button class="btn-outline" onclick="navigateTo('digital-twin')">
+              Full Map View →
+            </button>
+          </div>
 
-      <div id="twin-cards" class="twin-grid">
-        <!-- Rendered by JS -->
-        <div class="twin-card">
-          <div class="skeleton" style="height: 100%; min-height: 200px;"></div>
+          <div id="overview-twin-map" class="twin-zones-container">
+            <!-- Rendered by JS: Zones B1, B2, B3 -->
+            <div class="skeleton" style="height: 180px;"></div>
+            <div class="skeleton" style="height: 180px;"></div>
+            <div class="skeleton" style="height: 180px;"></div>
+          </div>
         </div>
-        <div class="twin-card">
-          <div class="skeleton" style="height: 100%; min-height: 200px;"></div>
+
+        <!-- Primary Farm Card & Zone Bento Row -->
+        <div class="bento-grid">
+          <div id="farm-feature" class="bento-card bento-col-8 feature-card">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div id="zone-cards" class="bento-col-4" style="display: contents;">
+            <!-- Zone cards rendered by JS -->
+          </div>
+
+          <!-- Alert / Advisory Quote Card -->
+          <div id="alert-quote" class="bento-card bento-col-12 quote-card" style="cursor: pointer;" onclick="navigateTo('alerts')">
+            <div class="quote-card-inner">
+              <p class="quote-text">"Loading latest advisory and alerts..."</p>
+              <span class="quote-source">— AgroVisor Edge</span>
+            </div>
+          </div>
         </div>
-        <div class="twin-card">
-          <div class="skeleton" style="height: 100%; min-height: 200px;"></div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         2. VIEW: DIGITAL TWIN (Full-Screen Cyber-Physical Model)
+         ============================================================ -->
+    <div id="view-digital-twin" class="page-view">
+      <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
+        <div class="view-header">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              CYBER-PHYSICAL SYNCHRONIZATION
+            </span>
+            <h2>Farm Digital Twin</h2>
+            <p>Unified digital twin model combining real-time soil sensors, edge camera scans, AI health diagnoses, closed-loop irrigation flow, and risk factors.</p>
+          </div>
+          <div class="view-header-actions">
+            <button class="btn-outline" onclick="loadZoneTwins(); renderDigitalTwinView();">
+              <span class="material-symbols-outlined" style="font-size: 0.875rem; vertical-align: middle;">refresh</span> Refresh Twin
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
+
+        <!-- Spatial Farm Grid -->
+        <div class="twin-map-hero" style="min-height: 420px; padding: 2.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="material-symbols-outlined" style="color: var(--agro-green);">crop_free</span>
+              <span style="font-family: var(--font-display); font-size: 1.125rem; font-weight: 600;">FARM ZONES TOPOLOGY</span>
+            </div>
+            <span class="text-label-sm" style="color: var(--outline);">Click zone card to open Inspector Drawer</span>
+          </div>
+
+          <div id="full-twin-zones-grid" class="twin-zones-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Aggregated Zone Twin Cards -->
+        <div style="margin-top: 3rem;">
+          <h3 class="text-headline-md" style="margin-bottom: 1rem;">Zone Twin Telemetry Aggregation</h3>
+          <div id="twin-cards" class="twin-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         3. VIEW: ZONES (Zone Details Deep-Dive)
+         ============================================================ -->
+    <div id="view-zones" class="page-view">
+      <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
+        <!-- Navigation Back to Overview -->
+        <div style="margin-bottom: 1.5rem;">
+          <button class="btn-ghost" onclick="navigateTo('overview')" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_back</span>
+            Farm Overview
+          </button>
+        </div>
+
+        <!-- Zone Selector Pills -->
+        <div class="zone-switcher-pills" id="zone-details-pills">
+          <!-- Rendered by JS: B1, B2, B3 -->
+        </div>
+
+        <!-- Zone Header -->
+        <div class="view-header" style="margin-bottom: 2rem;">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              ZONE OPERATIONAL DETAILS
+            </span>
+            <h2 id="zone-detail-title">Zone B1 — North Field</h2>
+            <p id="zone-detail-subtitle" style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="twin-badge healthy" id="zone-detail-status-badge">● Healthy Monitoring</span>
+              <span style="color: var(--outline);" id="zone-detail-updated">Last updated: 13:12</span>
+            </p>
+          </div>
+          <div class="view-header-actions">
+            <button class="btn-outline" onclick="navigateTo('ai-analysis')">
+              View Crop Vision
+            </button>
+            <button class="btn-pill-filled" onclick="navigateTo('irrigation')">
+              Irrigate Zone
+            </button>
+          </div>
+        </div>
+
+        <!-- Current Conditions (3 Cards) -->
+        <div class="conditions-grid">
+          <div class="condition-card">
+            <div class="condition-icon material-symbols-outlined" style="color: var(--agro-blue);">water</div>
+            <div class="kpi-label">Soil Moisture</div>
+            <div class="condition-val" id="zone-detail-moisture">28.0%</div>
+            <div class="progress-track">
+              <div id="zone-detail-moisture-bar" class="progress-fill amber" style="width: 28%;"></div>
+            </div>
+            <span class="text-label-sm" style="color: var(--outline);">Target Range: 40% – 60%</span>
+          </div>
+
+          <div class="condition-card">
+            <div class="condition-icon material-symbols-outlined" style="color: var(--agro-amber);">thermostat</div>
+            <div class="kpi-label">Soil Temperature</div>
+            <div class="condition-val" id="zone-detail-temp">35.0°C</div>
+            <div class="progress-track">
+              <div class="progress-fill red" style="width: 70%;"></div>
+            </div>
+            <span class="text-label-sm" style="color: var(--outline);">Elevated Heat Index</span>
+          </div>
+
+          <div class="condition-card">
+            <div class="condition-icon material-symbols-outlined" style="color: var(--primary);">light_mode</div>
+            <div class="kpi-label">Light Intensity</div>
+            <div class="condition-val" id="zone-detail-light">45,000<span style="font-size: 1.25rem; color: var(--outline);"> lux</span></div>
+            <div class="progress-track">
+              <div class="progress-fill green" style="width: 75%;"></div>
+            </div>
+            <span class="text-label-sm" style="color: var(--outline);">High Photosynthetic Radiation</span>
+          </div>
+        </div>
+
+        <!-- Historical Sensor Graph (Canvas / SVG Line Chart) -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary); margin-bottom: 0.25rem;">
+                Soil Moisture & Temperature Telemetry Trend
+              </h3>
+              <p style="font-size: 0.8125rem; color: var(--outline);">15-minute sensor intervals recorded at the physical edge node</p>
+            </div>
+            <div style="display: flex; gap: 1.5rem; align-items: center; font-size: 0.75rem;">
+              <span style="display: flex; align-items: center; gap: 0.375rem; color: var(--agro-blue);">
+                <span style="width: 12px; height: 2px; background: var(--agro-blue); display: inline-block;"></span> Moisture (%)
+              </span>
+              <span style="display: flex; align-items: center; gap: 0.375rem; color: var(--agro-amber);">
+                <span style="width: 12px; height: 2px; background: var(--agro-amber); display: inline-block;"></span> Temperature (°C)
+              </span>
+            </div>
+          </div>
+          <div class="svg-chart-container" id="zone-sensor-chart">
+            <!-- Rendered as SVG by JS -->
+          </div>
+        </div>
+
+        <!-- Crop Vision & AI Crop Analysis Section -->
+        <div class="vision-grid">
+          <!-- Crop Photograph -->
+          <div class="crop-image-panel">
+            <img
+              id="zone-detail-crop-img"
+              src="https://images.unsplash.com/photo-1592417817098-8f3d6910985c?w=1000&q=80"
+              alt="Crop Photograph"
+            />
+            <div class="crop-image-overlay">
+              <div>
+                <span class="text-label-sm" style="color: var(--primary); display: block;">LATEST CROP IMAGE</span>
+                <span style="font-size: 0.75rem; color: var(--on-surface-variant);" id="zone-detail-img-time">Captured: 13:08</span>
+              </div>
+              <span class="ai-pill-tag simulated">Simulated Provider Data</span>
+            </div>
+          </div>
+
+          <!-- AI Analysis Result Panel -->
+          <div class="ai-analysis-panel">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">AI Crop Analysis</h3>
+                <span class="ai-pill-tag simulated">Edge Model</span>
+              </div>
+
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Crop Health</span>
+                <span class="ai-metric-val" id="zone-detail-ai-health" style="color: var(--agro-amber);">● At Risk</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Possible Issue</span>
+                <span class="ai-metric-val" id="zone-detail-ai-disease" style="color: var(--agro-red);">Early Blight</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Confidence</span>
+                <span class="ai-metric-val" id="zone-detail-ai-conf">91%</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Growth Stage</span>
+                <span class="ai-metric-val" id="zone-detail-ai-stage">Vegetative</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06);">
+              <p style="font-size: 0.75rem; color: var(--outline); line-height: 1.5;">
+                <span class="material-symbols-outlined" style="font-size: 0.875rem; vertical-align: middle;">info</span>
+                Verification note: AI vision diagnoses currently utilize simulated provider data pending rover field camera attachment.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Intelligence / Decision Layer & Farmer Advisory -->
+        <div class="intelligence-grid">
+          <!-- Decision Panel -->
+          <div class="bento-card" style="padding: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">Farm Intelligence</h3>
+              <span class="twin-badge healthy" id="zone-detail-score-badge">Score: 72/100</span>
+            </div>
+
+            <div class="ai-metric-row">
+              <span class="ai-metric-label">Farm Health Score</span>
+              <span class="ai-metric-val" id="zone-detail-intel-score">72 / 100</span>
+            </div>
+            <div class="ai-metric-row">
+              <span class="ai-metric-label">Irrigation Priority</span>
+              <span class="ai-metric-val" id="zone-detail-intel-priority" style="color: var(--agro-amber);">MEDIUM</span>
+            </div>
+            <div class="ai-metric-row">
+              <span class="ai-metric-label">Water Stress</span>
+              <span class="ai-metric-val" id="zone-detail-intel-water" style="color: var(--agro-red);">HIGH</span>
+            </div>
+            <div class="ai-metric-row">
+              <span class="ai-metric-label">Heat Stress</span>
+              <span class="ai-metric-val" id="zone-detail-intel-heat" style="color: var(--agro-amber);">MODERATE</span>
+            </div>
+            <div class="ai-metric-row">
+              <span class="ai-metric-label">Disease Risk</span>
+              <span class="ai-metric-val" id="zone-detail-intel-disease" style="color: var(--agro-green);">LOW</span>
+            </div>
+            <div class="ai-metric-row">
+              <span class="ai-metric-label">Yield Risk</span>
+              <span class="ai-metric-val" id="zone-detail-intel-yield" style="color: var(--agro-amber);">MEDIUM</span>
+            </div>
+          </div>
+
+          <!-- Advisory Card -->
+          <div class="advisory-card" id="zone-detail-advisory-card">
+            <span class="text-label-sm" style="color: var(--agro-green); letter-spacing: 0.1em; display: block; margin-bottom: 1rem;">
+              FARMER ADVISORY
+            </span>
+            <p class="advisory-text" id="zone-detail-advisory-text">
+              "Monitor B1 closely. Current conditions indicate that the zone should be monitored for changes in soil moisture and early blight progression. Recommend targeted low-pressure drip irrigation during cooler afternoon hours."
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+              <span style="font-size: 0.75rem; color: var(--outline);" id="zone-detail-advisory-provider">Engine: agrovisor-edge-intelligence-v1</span>
+              <button class="btn-pill" onclick="navigateTo('irrigation')">Execute Irrigation</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         4. VIEW: AI ANALYSIS (Crop Vision Deep-Dive)
+         ============================================================ -->
+    <div id="view-ai-analysis" class="page-view">
+      <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
+        <div class="view-header">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              COMPUTER VISION & LEAF PATHOLOGY
+            </span>
+            <h2>AI Crop Vision Diagnosis</h2>
+            <p>High-resolution optical scans processed by on-farm Edge-AI models for early disease detection, foliar stress, and phenological stage tracking.</p>
+          </div>
+          <div class="view-header-actions">
+            <span class="ai-pill-tag simulated">Demo Simulation Provider Active</span>
+          </div>
+        </div>
+
+        <!-- AI Gallery & Deep Dive -->
+        <div class="vision-grid" style="margin-bottom: 3rem;">
+          <div class="crop-image-panel" style="height: 480px;">
+            <img
+              id="ai-page-img"
+              src="https://images.unsplash.com/photo-1592417817098-8f3d6910985c?w=1200&q=80"
+              alt="Crop Leaf High Resolution"
+              style="height: 100%;"
+            />
+            <div class="crop-image-overlay">
+              <div>
+                <span class="text-label-sm" style="color: var(--primary);">ZONE B1 — NORTH FIELD</span>
+                <span style="font-size: 0.8125rem; color: #a3a3a3;">Scan #IMG-2026-B1 · 13:08 IST</span>
+              </div>
+              <span class="twin-badge warning">Issue Detected</span>
+            </div>
+          </div>
+
+          <div class="ai-analysis-panel">
+            <div>
+              <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.75rem;">
+                Pathological Assessment
+              </h3>
+              <p style="color: var(--on-surface-variant); font-size: 0.875rem; margin-bottom: 1.5rem; line-height: 1.6;">
+                Multispectral analysis indicates localized necrotic lesions consistent with early fungal spore development. Low humidity drip irrigation recommended.
+              </p>
+
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Diagnosis</span>
+                <span class="ai-metric-val" style="color: var(--agro-red); font-size: 1.125rem;">Early Blight (Alternaria solani)</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Confidence Score</span>
+                <span class="ai-metric-val" style="color: var(--agro-green); font-size: 1.125rem;">91.4%</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Crop Phenology</span>
+                <span class="ai-metric-val">Vegetative Stage (V3)</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Canopy Coverage</span>
+                <span class="ai-metric-val">78.2%</span>
+              </div>
+              <div class="ai-metric-row">
+                <span class="ai-metric-label">Recommended Action</span>
+                <span class="ai-metric-val" style="color: var(--primary);">Soil-Level Drip · Avoid Foliage Wetting</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+              <button class="btn-pill-filled" style="width: 100%; text-align: center;" onclick="navigateTo('irrigation')">
+                Proceed to Precision Irrigation →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Scans Row -->
+        <h3 class="text-headline-md" style="margin-bottom: 1.5rem;">Multi-Zone Optical Scans</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+          <div class="bento-card" style="overflow: hidden; cursor: pointer;" onclick="navigateTo('zones')">
+            <img src="https://images.unsplash.com/photo-1592417817098-8f3d6910985c?w=600&q=80" style="height: 160px; width: 100%; object-fit: cover;" />
+            <div style="padding: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; color: var(--primary);">Zone B1</span>
+                <span class="twin-badge warning">91% Conf</span>
+              </div>
+              <p style="font-size: 0.8125rem; color: var(--outline);">Early Blight · At Risk</p>
+            </div>
+          </div>
+
+          <div class="bento-card" style="overflow: hidden; cursor: pointer;" onclick="navigateTo('zones')">
+            <img src="https://images.unsplash.com/photo-1592417817038-d13fd7342625?w=600&q=80" style="height: 160px; width: 100%; object-fit: cover;" />
+            <div style="padding: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; color: var(--primary);">Zone B2</span>
+                <span class="twin-badge critical">87% Conf</span>
+              </div>
+              <p style="font-size: 0.8125rem; color: var(--outline);">Water Stress Chlorosis</p>
+            </div>
+          </div>
+
+          <div class="bento-card" style="overflow: hidden; cursor: pointer;" onclick="navigateTo('zones')">
+            <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600&q=80" style="height: 160px; width: 100%; object-fit: cover;" />
+            <div style="padding: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; color: var(--primary);">Zone B3</span>
+                <span class="twin-badge healthy">96% Conf</span>
+              </div>
+              <p style="font-size: 0.8125rem; color: var(--outline);">Optimal Foliage · Healthy</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         5. VIEW: IRRIGATION (Precision Control & Closed-Loop Flow Verification)
+         ============================================================ -->
+    <div id="view-irrigation" class="page-view">
+      <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
+        <div class="view-header">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              ACTUATION & PHYSICAL FEEDBACK
+            </span>
+            <h2>Irrigation Control Center</h2>
+            <p>Target volume dispatch, real-time solenoid valve actuation, and closed-loop flow meter verification.</p>
+          </div>
+        </div>
+
+        <!-- DEMO SIMULATION BAR (For Judges) -->
+        <div class="demo-sim-bar animate-in">
+          <div class="demo-sim-title">
+            <span class="material-symbols-outlined">science</span>
+            <div>
+              <span style="font-weight: 700; color: var(--primary); font-size: 0.9375rem; display: block;">
+                JUDGE DEMONSTRATION: Physical Flow Feedback Loop
+              </span>
+              <span style="font-size: 0.75rem; color: var(--on-surface-variant);">
+                Simulate real physical responses from the edge flow meter to test target completion vs fault alert generation.
+              </span>
+            </div>
+          </div>
+          <div class="demo-sim-actions">
+            <button id="btn-sim-normal" class="btn-sim-success" onclick="runSimulateNormalFlow()">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">water_drop</span>
+              ▶ Simulate Normal Flow (2.4 L/min)
+            </button>
+            <button id="btn-sim-fault" class="btn-sim-fault" onclick="runSimulateFlowFault()">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">error</span>
+              ⚠ Simulate Flow Fault (Pump ON, Flow 0)
+            </button>
+          </div>
+        </div>
+
+        <!-- IRRIGATION FAULT BANNER (Appears on failure) -->
+        <div id="irrigation-fault-banner" class="fault-banner" style="display: none;">
+          <div class="fault-banner-left">
+            <span class="material-symbols-outlined fault-banner-icon">report_problem</span>
+            <div>
+              <span class="text-label-sm" style="color: var(--agro-red); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+                IRRIGATION FAULT ⚠ HIGH SEVERITY
+              </span>
+              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary); margin-bottom: 0.25rem;">
+                Pump is ON but water flow is zero.
+              </h3>
+              <p style="font-size: 0.8125rem; color: var(--on-surface-variant);" id="fault-banner-zone-text">
+                Zone: B2 · Irrigation: FAILED · Solenoid or pipe blockage detected.
+              </p>
+            </div>
+          </div>
+          <div>
+            <button class="btn-outline" onclick="navigateTo('alerts')">
+              View Alert →
+            </button>
+          </div>
+        </div>
+
+        <!-- Control Form & Live Pump Visualizer Grid -->
+        <div class="irrigation-control-grid">
+          <!-- Command Form Card -->
+          <div class="bento-card" style="padding: 2.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem;">
+              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">Dispatch Command</h3>
+              <span id="irrig-form-status-badge" class="twin-badge healthy">READY</span>
+            </div>
+
+            <form id="irrigation-form-page">
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label class="form-label" for="irrig-page-zone-select">Target Zone</label>
+                <select id="irrig-page-zone-select" class="form-select" required>
+                  <option value="">Loading zones...</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label class="form-label" for="irrig-page-action-select">Command Action</label>
+                <select id="irrig-page-action-select" class="form-select" required>
+                  <option value="START">START IRRIGATION</option>
+                  <option value="STOP">STOP IRRIGATION</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 2rem;">
+                <label class="form-label" for="irrig-page-target-input">Target Water (Liters)</label>
+                <input id="irrig-page-target-input" class="form-input" type="number" min="1" step="0.5" value="10.0" placeholder="10.0" />
+              </div>
+
+              <div style="display: flex; gap: 1rem;">
+                <button type="submit" id="irrig-page-submit-btn" class="btn-pill-filled" style="flex: 1; text-align: center;">
+                  Send Command
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Real-Time Pump & Verification Status -->
+          <div class="pump-monitor-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">Live Flow Monitor</h3>
+              <span id="pump-indicator-badge" class="pump-indicator-badge on">
+                <span class="material-symbols-outlined" style="font-size: 1rem;">power_settings_new</span>
+                <span id="pump-indicator-text">Pump: ON</span>
+              </span>
+            </div>
+
+            <div class="pump-visual-row">
+              <div>
+                <span class="text-label-sm" style="color: var(--outline);">FLOW RATE</span>
+                <div style="font-family: var(--font-display); font-size: 2rem; color: var(--primary);" id="live-flow-rate">
+                  2.4 <span style="font-size: 1rem; color: var(--outline);">L/min</span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span class="text-label-sm" style="color: var(--outline);">DELIVERED</span>
+                <div style="font-family: var(--font-display); font-size: 2rem; color: var(--agro-blue);" id="live-water-delivered">
+                  5.6 <span style="font-size: 1rem; color: var(--outline);">/ 10.0 L</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--outline); margin-bottom: 0.5rem;">
+                <span>Target Progress</span>
+                <span id="live-progress-pct">56%</span>
+              </div>
+              <div class="progress-track" style="height: 6px;">
+                <div id="live-progress-bar" class="progress-fill green" style="width: 56%;"></div>
+              </div>
+            </div>
+
+            <!-- Target Reached Banner -->
+            <div id="target-reached-banner" style="display: none; padding: 1rem; background: rgba(74, 222, 128, 0.1); border: 1px solid var(--agro-green-dark); border-radius: var(--radius-md); text-align: center;">
+              <span style="color: var(--agro-green); font-weight: 700; font-size: 0.875rem;">
+                ✓ TARGET REACHED · 10.0 / 10.0 L · IRRIGATION COMPLETED
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Irrigation Events History Table -->
+        <div class="bento-card" style="padding: 2rem; margin-top: 2rem;">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary); margin-bottom: 1.5rem;">
+            Irrigation Actuation Log
+          </h3>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Zone</th>
+                  <th>Command</th>
+                  <th>Target</th>
+                  <th>Delivered</th>
+                  <th>Status</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="irrigation-history-tbody">
+                <tr><td colspan="7" style="text-align: center; color: var(--outline);">Loading history...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         6. VIEW: ALERTS (Dedicated Alert Center)
+         ============================================================ -->
+    <div id="view-alerts" class="page-view">
+      <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
+        <div class="view-header">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              INCIDENT RESPONSE & TELEMETRY ALARMS
+            </span>
+            <h2>Alert Center</h2>
+            <p>Real-time physical threshold excursions, flow faults, and crop health notifications.</p>
+          </div>
+          <div class="view-header-actions">
+            <button class="btn-outline" onclick="loadAlerts(); renderAlertsPage();">
+              <span class="material-symbols-outlined" style="font-size: 0.875rem; vertical-align: middle;">refresh</span> Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Alert Filter Tabs -->
+        <div class="alerts-tabs">
+          <button class="tab-btn active" id="tab-all-alerts" onclick="setAlertsFilter('ALL')">ALL ALERTS</button>
+          <button class="tab-btn" id="tab-unread-alerts" onclick="setAlertsFilter('UNREAD')">UNREAD ONLY</button>
+          <button class="tab-btn" id="tab-critical-alerts" onclick="setAlertsFilter('CRITICAL')">CRITICAL & HIGH</button>
+        </div>
+
+        <!-- Alert Items Container -->
+        <div id="alerts-list-container" class="alert-list">
+          <!-- Rendered by JS -->
+          <div class="empty-state">
+            <span class="material-symbols-outlined">notifications</span>
+            <p>Loading active farm alerts...</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         7. VIEW: ANALYTICS (Historical Trends & Water Metrics)
+         ============================================================ -->
+    <div id="view-analytics" class="page-view">
+      <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
+        <div class="view-header">
+          <div class="view-header-title">
+            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
+              LONGITUDINAL TELEMETRY & EFFICIENCY
+            </span>
+            <h2>Farm Telemetry Analytics</h2>
+            <p>Historical trends across soil moisture, soil temperature, canopy VPD, and precision irrigation water conservation.</p>
+          </div>
+        </div>
+
+        <!-- Top Analytics Metrics -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Water Efficiency</div>
+            <div class="kpi-value" style="color: var(--agro-green);">94.2%</div>
+            <div class="kpi-sub">vs manual irrigation</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Completed Cycles</div>
+            <div class="kpi-value">18</div>
+            <div class="kpi-sub">Past 7 days</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Line Faults</div>
+            <div class="kpi-value" style="color: var(--agro-red);">1</div>
+            <div class="kpi-sub">Resolved via feedback</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Mean Moisture</div>
+            <div class="kpi-value">33.4%</div>
+            <div class="kpi-sub">Farm-wide avg</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Active Sensors</div>
+            <div class="kpi-value">12 / 12</div>
+            <div class="kpi-sub">100% reporting</div>
+          </div>
+        </div>
+
+        <!-- 3 Trend Charts -->
+        <div class="chart-card" style="margin-top: 2rem;">
+          <div class="chart-header">
+            <div>
+              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">Soil Moisture Profile Across All Zones</h3>
+              <p style="font-size: 0.8125rem; color: var(--outline);">Continuous 12-interval telemetry curve (Zones B1, B2, B3)</p>
+            </div>
+          </div>
+          <div class="svg-chart-container" id="analytics-moisture-chart"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.125rem; color: var(--primary);">Soil Temperature (°C)</h3>
+                <p style="font-size: 0.75rem; color: var(--outline);">Heat stress correlation</p>
+              </div>
+            </div>
+            <div class="svg-chart-container" style="height: 180px;" id="analytics-temp-chart"></div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.125rem; color: var(--primary);">Light Intensity (lux)</h3>
+                <p style="font-size: 0.75rem; color: var(--outline);">Canopy solar exposure</p>
+              </div>
+            </div>
+            <div class="svg-chart-container" style="height: 180px;" id="analytics-light-chart"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
   </main>
 
-  <!-- ============ FOOTER ============ -->
+  <!-- ============ SLIDE-OUT INSPECTOR DRAWER (For Digital Twin) ============ -->
+  <div id="inspector-overlay" class="inspector-overlay" onclick="closeInspector()"></div>
+  <aside id="inspector-drawer" class="inspector-drawer" aria-label="Zone Inspector">
+    <div class="inspector-header">
+      <div>
+        <span class="text-label-sm" style="color: var(--agro-green); letter-spacing: 0.08em; display: block;">DIGITAL TWIN INSPECTOR</span>
+        <h3 id="inspector-zone-name" style="font-family: var(--font-display); font-size: 1.375rem; color: var(--primary);">B1 — North Field</h3>
+      </div>
+      <button class="inspector-close-btn" onclick="closeInspector()" aria-label="Close Inspector">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="inspector-body" id="inspector-content">
+      <!-- Rendered dynamically by JS when a zone is clicked -->
+      <div class="empty-state">
+        <p>Select a zone from the Digital Twin map to inspect its real-time cyber-physical state.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ FOOTER & SYSTEM STATUS ============ -->
   <footer class="footer">
     <div class="footer-inner">
       <div>
         <div class="footer-brand">AgroVisor Edge</div>
-        <div class="footer-copy">© 2026 AgroVisor Edge · SIH26180 · Precision Agriculture Platform</div>
+        <div class="footer-copy">
+          © 2026 AgroVisor Edge · SIH26180 · Precision Agriculture Platform
+        </div>
+        <div style="margin-top: 0.5rem; display: flex; gap: 1rem; align-items: center; font-size: 0.75rem; color: #737373;">
+          <span>● Backend: <span style="color: var(--agro-green);">Connected</span></span>
+          <span>● Database: <span style="color: var(--agro-green);">SQLite Active</span></span>
+          <span>○ Rover: <span style="color: var(--agro-amber);">Demo Mode</span></span>
+        </div>
       </div>
       <ul class="footer-links">
         <li><a href="http://localhost:8000/docs" target="_blank">API Docs</a></li>
-        <li><a href="#">Health</a></li>
-        <li><a href="#">About</a></li>
+        <li><a href="#overview" onclick="navigateTo('overview', event)">Overview</a></li>
+        <li><a href="#digital-twin" onclick="navigateTo('digital-twin', event)">Digital Twin</a></li>
+        <li><a href="#zones" onclick="navigateTo('zones', event)">Zones</a></li>
+        <li><a href="#irrigation" onclick="navigateTo('irrigation', event)">Irrigation</a></li>
       </ul>
     </div>
   </footer>
 
-  <!-- Toast container -->
+  <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- App script -->
+  <!-- App Script -->
   <script type="module" src="/src/main.js"></script>
-  <script>
-    // Global helper for refresh button
-    window.loadDashboardRefresh = async function() {
-      const { loadDashboard } = await import('/src/main.js');
-      // Force a re-check
-      location.reload();
-    };
-  </script>
 </body>
 </html>

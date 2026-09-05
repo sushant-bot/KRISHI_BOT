@@ -1,0 +1,219 @@
+/* Sterling Gate Kinetic Navigation Styles */
+:root {
+  --color-primary: #6366f1;
+  --color-dark: #131313;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-800: #262626;
+  --size-container: 1400px;
+  --container-padding: 2em;
+  --section-padding: 4em;
+  --gap: 1.5em;
+  --cubic-default: cubic-bezier(0.65, 0.05, 0, 1);
+}
+
+.site-header-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.header {
+  padding: 1.5rem 2rem;
+}
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--size-container);
+  margin: 0 auto;
+}
+
+.nav-row__right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nav-toggle-label {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-neutral-200);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nav-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-neutral-800);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  color: var(--color-neutral-100);
+  cursor: pointer;
+  overflow: hidden;
+  height: 2.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.nav-close-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.menu-button-text {
+  position: relative;
+  height: 1.25rem;
+  overflow: hidden;
+}
+
+.menu-button-text .p-large {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  margin: 0;
+}
+
+.icon-wrap {
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-button-icon {
+  width: 1rem;
+  height: 1rem;
+  transform-origin: center;
+}
+
+/* Fullscreen Menu */
+.fullscreen-menu-container {
+  position: relative;
+  z-index: 999;
+}
+
+.nav-overlay-wrapper {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 998;
+}
+
+.nav-overlay-wrapper .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.menu-content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 600px;
+  background: var(--color-dark);
+  border-left: 1px solid var(--color-neutral-800);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.backdrop-layer {
+  position: absolute;
+  inset: 0;
+  background: #18181b;
+}
+
+.backdrop-layer.first {
+  background: #27272a;
+}
+
+.backdrop-layer.second {
+  background: #1e1e24;
+}
+
+.ambient-background-shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bg-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.bg-shape.active {
+  opacity: 1;
+}
+
+.shape-element {
+  transform-origin: center;
+}
+
+.menu-content-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.menu-list-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link {
+  display: inline-block;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  color: var(--color-neutral-200);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  transform: translateX(0.5rem);
+}
+
+.nav-link-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.1;
+}

@@ -66,6 +66,26 @@
   --inverse-on-surface: #313030;
   --inverse-primary: #5d5f5f;
 
+  /* Header & Navigation specific (Dark Default) */
+  --header-bg: rgba(14, 14, 14, 0.88);
+  --header-bg-scrolled: rgba(10, 10, 10, 0.95);
+  --header-border: rgba(38, 38, 38, 0.4);
+  --header-border-scrolled: rgba(255, 255, 255, 0.08);
+
+  /* Nav buttons */
+  --nav-btn-bg: rgba(255, 255, 255, 0.05);
+  --nav-btn-hover: rgba(255, 255, 255, 0.08);
+  --nav-btn-border: var(--card-border);
+  --nav-btn-border-hover: var(--card-border-hover);
+
+  /* Menu Backdrop & Elevation */
+  --menu-bg-main: #111111;
+  --menu-bg-layer1: #1a1a1a;
+  --menu-bg-layer2: #151515;
+  --menu-overlay: rgba(0, 0, 0, 0.75);
+  --menu-shadow: -15px 0 50px rgba(0, 0, 0, 0.8);
+  --card-shadow: none;
+
   /* Typography */
   --font-display: 'Noto Serif', Georgia, serif;
   --font-body: 'Manrope', system-ui, sans-serif;
@@ -89,6 +109,86 @@
   --transition-base: 200ms ease-in-out;
   --transition-slow: 300ms ease-in-out;
   --transition-slower: 500ms ease-in-out;
+}
+
+/* ---------- AgroVisor Edge Light Mode Design System (Warm Muted Editorial Slate) ---------- */
+:root[data-theme="light"] {
+  /* Surface & Background — soft, warm, gentle muted linen & natural stone (no eye strain) */
+  --surface-lowest: #e9ece6;
+  --surface: #f2f5ef;
+  --surface-container-low: #e2e6df;
+  --surface-container: #d7dcd4;
+  --surface-container-high: #cbd1c7;
+  --surface-container-highest: #bec5ba;
+  --surface-variant: #d4d9d0;
+  --surface-bright: #f8faf5;
+  --surface-dim: #e3e7df;
+
+  /* Card-specific — gentle warm alabaster/stone cards with soft organic definition */
+  --card-bg: #f5f8f2;
+  --card-border: #d0d6cb;
+  --card-border-hover: #b4bcad;
+  --card-elevated: #f9fbf7;
+  --card-shadow: 0 1px 3px 0 rgba(28, 38, 28, 0.06), 0 1px 2px -1px rgba(28, 38, 28, 0.04);
+
+  /* Comfortable deep charcoal typography */
+  --on-surface: #18221b;
+  --on-surface-variant: #4a564d;
+  --on-background: #18221b;
+
+  /* Primary text / prominent elements */
+  --primary: #152018;
+  --on-primary: #f2f5ef;
+  --primary-container: #233226;
+  --primary-fixed: #152018;
+  --primary-fixed-dim: #38463c;
+
+  /* Secondary */
+  --secondary: #4a564d;
+  --secondary-fixed: #38463c;
+  --secondary-fixed-dim: #606d64;
+  --secondary-container: #dce1d8;
+
+  /* Outline */
+  --outline: #627066;
+  --outline-variant: #c0c7bc;
+
+  /* Error */
+  --error: #b91c1c;
+  --error-container: #fde8e8;
+  --on-error: #991b1b;
+
+  /* Preserved AgroVisor Emerald & Cyan Identity (Tailored for warm light contrast) */
+  --agro-green: #15803d;
+  --agro-green-dim: #16a34a;
+  --agro-green-dark: #d5edd9;
+  --agro-blue: #0369a1;
+  --agro-amber: #b45309;
+  --agro-red: #b91c1c;
+
+  /* Inverse */
+  --inverse-surface: #1e2820;
+  --inverse-on-surface: #f2f5ef;
+  --inverse-primary: #e6ede4;
+
+  /* Header & Navigation (Toned down glassmorphism) */
+  --header-bg: rgba(233, 236, 230, 0.92);
+  --header-bg-scrolled: rgba(242, 245, 239, 0.98);
+  --header-border: rgba(28, 38, 28, 0.1);
+  --header-border-scrolled: rgba(28, 38, 28, 0.15);
+
+  /* Nav buttons */
+  --nav-btn-bg: rgba(28, 38, 28, 0.05);
+  --nav-btn-hover: rgba(28, 38, 28, 0.1);
+  --nav-btn-border: rgba(28, 38, 28, 0.14);
+  --nav-btn-border-hover: rgba(28, 38, 28, 0.28);
+
+  /* Menu Backdrop & Elevation */
+  --menu-bg-main: #f2f5ef;
+  --menu-bg-layer1: #e2e6df;
+  --menu-bg-layer2: #eaede6;
+  --menu-overlay: rgba(20, 30, 22, 0.45);
+  --menu-shadow: -15px 0 45px rgba(20, 30, 22, 0.12);
 }
 
 /* ---------- Reset & Base ---------- */
@@ -196,121 +296,99 @@ img {
   padding: var(--section-gap) 1rem;
 }
 
-/* ---------- Navigation ---------- */
-.nav {
+/* ---------- AgroVisor Kinetic Navigation Header ---------- */
+.site-header-wrapper {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
-  background: transparent;
-  border-bottom: 1px solid rgba(38, 38, 38, 0.3);
-  transition: background var(--transition-base), backdrop-filter var(--transition-base);
-}
-
-.nav.scrolled {
-  background: rgba(14, 14, 14, 0.85);
+  z-index: 1000;
+  background: var(--header-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--header-border);
+  transition: background var(--transition-base), border-color var(--transition-base);
 }
 
-.nav-inner {
+.site-header-wrapper.scrolled {
+  background: var(--header-bg-scrolled);
+  border-bottom-color: var(--header-border-scrolled);
+}
+
+.nav-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.875rem 2rem;
 }
 
-.nav-brand {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+/* Compact AgroVisor Branding */
+.nav-brand-compact {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.nav-brand .material-symbols-outlined {
-  font-size: 1.5rem;
+.nav-brand-compact .brand-icon {
+  font-size: 1.75rem;
   color: var(--agro-green);
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.35);
 }
 
-.nav-links {
+.brand-text-col {
   display: flex;
-  gap: 1.5rem;
-  list-style: none;
+  flex-direction: column;
 }
 
-.nav-links a {
-  color: #d4d4d4;
-  font-size: 0.875rem;
+.brand-title {
   font-family: var(--font-display);
-  letter-spacing: -0.01em;
-  transition: color var(--transition-base);
-  padding-bottom: 0.25rem;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   color: var(--primary);
+  line-height: 1.15;
 }
 
-.nav-links a.active {
-  border-bottom: 1px solid var(--primary);
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.api-key-input-wrap {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--outline-variant);
-  padding-bottom: 0.25rem;
-  transition: border-color var(--transition-base);
-}
-
-.api-key-input-wrap:focus-within {
-  border-color: var(--outline);
-}
-
-.api-key-input-wrap .material-symbols-outlined {
-  font-size: 0.875rem;
+.brand-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   color: var(--outline);
-  margin-right: 0.5rem;
+  text-transform: uppercase;
 }
 
-.api-key-input {
-  background: transparent;
-  border: none;
+/* Center Context Bar */
+.nav-context-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.farm-select-nav {
+  background: var(--surface-container-high);
+  border: 1px solid var(--card-border);
   color: var(--primary);
   font-size: 0.75rem;
   font-family: var(--font-body);
   font-weight: 600;
-  letter-spacing: 0.08em;
-  width: 8rem;
-  transition: width var(--transition-slow);
-}
-
-.api-key-input:focus {
-  width: 12rem;
-}
-
-.api-key-input::placeholder {
-  color: #d4d4d4;
+  padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e9192' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
 }
 
 .connection-indicator {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.4rem;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -327,12 +405,270 @@ img {
 
 .connection-dot.connected {
   background: var(--agro-green);
-  box-shadow: 0 0 6px var(--agro-green);
+  box-shadow: 0 0 8px var(--agro-green);
 }
 
 .connection-dot.error {
   background: var(--agro-red);
-  box-shadow: 0 0 6px var(--agro-red);
+  box-shadow: 0 0 8px var(--agro-red);
+}
+
+/* Kinetic Menu Button & Theme Toggle Controls */
+.nav-row__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: var(--nav-btn-bg);
+  border: 1px solid var(--nav-btn-border);
+  border-radius: 9999px;
+  padding: 0.4rem 1.125rem;
+  color: var(--primary);
+  cursor: pointer;
+  overflow: hidden;
+  height: 2.25rem;
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.nav-close-btn:hover {
+  border-color: var(--nav-btn-border-hover);
+  background: var(--nav-btn-hover);
+}
+
+.menu-button-text {
+  position: relative;
+  height: 1.125rem;
+  overflow: hidden;
+  width: 2.5rem;
+  text-align: left;
+}
+
+.menu-button-text .p-large {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.125rem;
+  margin: 0;
+  color: var(--primary);
+}
+
+.icon-wrap {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-button-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  transform-origin: center;
+  color: var(--primary);
+}
+
+/* Light / Dark Mode Toggle Button */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--nav-btn-bg);
+  border: 1px solid var(--nav-btn-border);
+  border-radius: 9999px;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color var(--transition-base), background var(--transition-base), transform var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--nav-btn-border-hover);
+  background: var(--nav-btn-hover);
+  transform: scale(1.05);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle-glyph {
+  font-size: 1.15rem;
+  line-height: 1;
+  user-select: none;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+}
+
+/* Fullscreen Kinetic Menu Overlay */
+.fullscreen-menu-container {
+  position: relative;
+  z-index: 9999;
+}
+
+.nav-overlay-wrapper {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 9998;
+}
+
+.nav-overlay-wrapper .overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--menu-overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+
+.menu-content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 560px;
+  background: var(--menu-bg-main);
+  border-left: 1px solid var(--card-border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3rem;
+  box-shadow: var(--menu-shadow);
+}
+
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.backdrop-layer {
+  position: absolute;
+  inset: 0;
+  background: var(--menu-bg-main);
+}
+
+.backdrop-layer.first {
+  background: var(--menu-bg-layer1);
+}
+
+.backdrop-layer.second {
+  background: var(--menu-bg-layer2);
+}
+
+/* Subtle AgroVisor Ambient Vector Shapes */
+.ambient-background-shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bg-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.bg-shape.active {
+  opacity: 1;
+}
+
+.shape-element {
+  transform-origin: center;
+}
+
+/* Kinetic Navigation List */
+.menu-content-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.menu-list-item {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.menu-list-item:last-child {
+  border-bottom: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: baseline;
+  text-decoration: none;
+  padding: 0.625rem 0;
+  color: var(--on-surface-variant);
+  transition: transform var(--transition-base), color var(--transition-base);
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  transform: translateX(0.625rem);
+}
+
+.nav-item-num {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--outline-variant);
+  margin-right: 1.25rem;
+  letter-spacing: 0.06em;
+}
+
+.nav-link:hover .nav-item-num {
+  color: var(--agro-green);
+}
+
+.nav-link-text {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.nav-item-sub {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.nav-link:hover .nav-item-sub {
+  opacity: 0.8;
+  color: var(--agro-blue);
 }
 
 .btn-primary {
@@ -369,36 +705,39 @@ img {
 
 .btn-outline:hover {
   border-color: var(--card-border-hover);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--nav-btn-hover);
 }
 
 .btn-pill {
-  border: 1px solid #333;
+  border: 1px solid var(--card-border);
   color: var(--primary);
   border-radius: 9999px;
   padding: 0.625rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 600;
-  transition: background var(--transition-base);
+  transition: background var(--transition-base), border-color var(--transition-base);
 }
 
 .btn-pill:hover {
-  background: #1a1a1a;
+  background: var(--surface-container-high);
+  border-color: var(--card-border-hover);
 }
 
 .btn-pill-filled {
   background: var(--primary);
-  color: #000;
+  color: var(--on-primary);
   border-radius: 9999px;
   padding: 0.625rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 700;
-  transition: background var(--transition-base);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+  transition: background var(--transition-base), transform var(--transition-fast);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .btn-pill-filled:hover {
-  background: #e5e5e5;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  transform: translateY(-1px);
 }
 
 /* ---------- Hero Section ---------- */
@@ -1314,3 +1653,963 @@ img {
 .animate-delay-2 { animation-delay: 0.2s; }
 .animate-delay-3 { animation-delay: 0.3s; }
 .animate-delay-4 { animation-delay: 0.4s; }
+
+/* ============================================================
+   AgroVisor Edge — Story Flow Extensions (Preserving Theme)
+   ============================================================ */
+
+/* Page View Routing */
+.page-view {
+  display: none;
+  width: 100%;
+}
+
+.page-view.active {
+  display: block;
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+/* Nav Sub-links & Brand Additions */
+.nav-links a {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.farm-select-nav {
+  background: var(--surface-container-high);
+  border: 1px solid var(--card-border);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.rover-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.rover-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--agro-amber);
+  box-shadow: 0 0 6px var(--agro-amber);
+}
+
+/* Section Subheaders */
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.view-header-title h2 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--primary);
+  margin-bottom: 0.375rem;
+}
+
+.view-header-title p {
+  color: var(--on-surface-variant);
+  font-size: 0.9375rem;
+}
+
+.view-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* KPI Grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 1200px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color var(--transition-base), transform var(--transition-base);
+}
+
+.kpi-card:hover {
+  border-color: var(--card-border-hover);
+  transform: translateY(-2px);
+}
+
+.kpi-card .kpi-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kpi-card .kpi-value {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--primary);
+  line-height: 1.1;
+  margin-bottom: 0.375rem;
+}
+
+.kpi-card .kpi-sub {
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* Digital Twin Map Hero */
+.twin-map-hero {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  background-image: radial-gradient(var(--card-border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  box-shadow: var(--card-shadow);
+}
+
+.twin-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.twin-map-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.twin-zones-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .twin-zones-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.twin-zone-node {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all var(--transition-slow);
+  position: relative;
+  box-shadow: var(--card-shadow);
+}
+
+.twin-zone-node:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.twin-zone-node.selected {
+  border-color: var(--agro-green);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+}
+
+.twin-zone-node.alert-state {
+  border-color: rgba(248, 113, 113, 0.6);
+}
+
+.twin-node-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.twin-node-code {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.twin-node-name {
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+}
+
+.twin-node-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+  margin-top: 1rem;
+}
+
+.twin-node-stat {
+  background: var(--surface-container-low);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.625rem;
+}
+
+.twin-node-stat-label {
+  font-size: 0.625rem;
+  color: var(--outline);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.125rem;
+}
+
+.twin-node-stat-val {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Slide-out Inspector Drawer */
+.inspector-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--menu-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 190;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.inspector-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.inspector-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 480px;
+  max-width: 100vw;
+  height: 100vh;
+  background: var(--surface);
+  border-left: 1px solid var(--card-border);
+  z-index: 200;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform var(--transition-slow) cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--menu-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.inspector-drawer.open {
+  transform: translateX(0);
+}
+
+.inspector-header {
+  padding: 1.75rem 2rem;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.inspector-body {
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.inspector-close-btn {
+  color: var(--outline);
+  cursor: pointer;
+  padding: 0.375rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.inspector-close-btn:hover {
+  color: var(--primary);
+}
+
+/* Zone Details Specifics */
+.zone-switcher-pills {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.zone-pill-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--on-surface-variant);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.zone-pill-btn:hover {
+  border-color: var(--card-border-hover);
+  color: var(--primary);
+}
+
+.zone-pill-btn.active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
+}
+
+.conditions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .conditions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.condition-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.condition-card .condition-icon {
+  font-size: 1.5rem;
+  color: var(--outline-variant);
+  margin-bottom: 1rem;
+}
+
+.condition-card .condition-val {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  line-height: 1.1;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Historical Sensor Sparkline SVG */
+.chart-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.svg-chart-container {
+  width: 100%;
+  height: 220px;
+  position: relative;
+}
+
+.svg-chart {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Crop Vision Photo & AI Analysis */
+.vision-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .vision-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crop-image-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+}
+
+.crop-image-panel img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+}
+
+.crop-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(to top, rgba(14, 14, 14, 0.95), transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-analysis-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ai-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ai-pill-tag.simulated {
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: var(--agro-blue);
+}
+
+.ai-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ai-metric-row:last-child {
+  border-bottom: none;
+}
+
+.ai-metric-label {
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+}
+
+.ai-metric-val {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--primary);
+}
+
+/* Farm Intelligence & Advisory */
+.intelligence-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .intelligence-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.advisory-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  border-left: 3px solid var(--agro-green);
+}
+
+.advisory-card.warning-left {
+  border-left-color: var(--agro-amber);
+}
+
+.advisory-text {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  color: var(--primary);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
+
+/* Irrigation Control & Flow Verification */
+.irrigation-control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 1024px) {
+  .irrigation-control-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pump-monitor-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.pump-visual-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background: var(--surface-container-low);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+}
+
+.pump-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pump-indicator-badge.on {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid var(--agro-green);
+  color: var(--agro-green);
+  animation: pulseGreen 2s infinite;
+}
+
+.pump-indicator-badge.off {
+  background: var(--surface-container-high);
+  border: 1px solid var(--card-border);
+  color: var(--outline);
+}
+
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 6px rgba(74, 222, 128, 0.2); }
+  50% { box-shadow: 0 0 16px rgba(74, 222, 128, 0.4); }
+}
+
+/* Simulation Demonstration Bar */
+.demo-sim-bar {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem 2rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  box-shadow: var(--card-shadow);
+}
+
+.demo-sim-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.demo-sim-title .material-symbols-outlined {
+  color: var(--agro-blue);
+  font-size: 1.5rem;
+}
+
+.demo-sim-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-sim-success {
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid var(--agro-green-dark);
+  color: var(--agro-green);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-sim-success:hover {
+  background: rgba(74, 222, 128, 0.2);
+  border-color: var(--agro-green);
+}
+
+.btn-sim-fault {
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: var(--agro-red);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-sim-fault:hover {
+  background: rgba(248, 113, 113, 0.2);
+  border-color: var(--agro-red);
+}
+
+/* Fault Banner */
+.fault-banner {
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  animation: toastIn 0.3s ease-out;
+}
+
+.fault-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fault-banner-icon {
+  font-size: 2rem;
+  color: var(--agro-red);
+}
+
+/* Alerts Center Styles */
+.alerts-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--on-surface-variant);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+  border-color: var(--card-border-hover);
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alert-item-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all var(--transition-base);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--card-shadow);
+}
+
+.alert-item-card.critical {
+  border-left-color: var(--agro-red);
+}
+
+.alert-item-card.high {
+  border-left-color: var(--agro-amber);
+}
+
+.alert-item-card.medium {
+  border-left-color: var(--agro-blue);
+}
+
+.alert-item-card.info {
+  border-left-color: var(--outline);
+}
+
+.alert-item-card.read {
+  opacity: 0.6;
+}
+
+.alert-severity-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+.alert-severity-badge.critical {
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--agro-red);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.alert-severity-badge.high {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--agro-amber);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.alert-severity-badge.medium {
+  background: rgba(96, 165, 250, 0.15);
+  color: var(--agro-blue);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.alert-severity-badge.info {
+  background: var(--surface-container-high);
+  color: var(--outline);
+  border: 1px solid var(--card-border);
+}
+
+/* History Table */
+.data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.data-table th {
+  padding: 0.875rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--on-surface-variant);
+}
+
+.data-table tr:hover td {
+  background: var(--surface-container-low);
+}
+
+/* ============================================================
+   AgroVisor Edge — Light Mode Component Overrides & Polishing
+   ============================================================ */
+:root[data-theme="light"] .hero-bg .overlay-darken {
+  background: rgba(233, 236, 230, 0.65);
+  mix-blend-mode: normal;
+}
+
+:root[data-theme="light"] .hero-bg .overlay-gradient {
+  background: linear-gradient(to top, var(--surface-lowest), rgba(233, 236, 230, 0.4) 60%, transparent);
+}
+
+:root[data-theme="light"] .hero-content h1 {
+  text-shadow: none;
+  color: var(--primary);
+}
+
+:root[data-theme="light"] .hero-content p {
+  text-shadow: none;
+  color: var(--on-surface-variant);
+}
+
+:root[data-theme="light"] .crop-image-overlay {
+  background: linear-gradient(to top, rgba(242, 245, 239, 0.95), transparent);
+}
+
+:root[data-theme="light"] .ambient-background-shapes circle,
+:root[data-theme="light"] .ambient-background-shapes rect,
+:root[data-theme="light"] .ambient-background-shapes path,
+:root[data-theme="light"] .ambient-background-shapes line,
+:root[data-theme="light"] .ambient-background-shapes polyline {
+  stroke-opacity: 0.35;
+}
+
+:root[data-theme="light"] .ai-metric-row {
+  border-bottom-color: var(--card-border);
+}
+
+:root[data-theme="light"] .alert-severity-badge.critical {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+:root[data-theme="light"] .alert-severity-badge.high {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+:root[data-theme="light"] .alert-severity-badge.medium {
+  background: #e0f2fe;
+  color: #0284c7;
+  border-color: #bae6fd;
+}
+
+:root[data-theme="light"] .alert-severity-badge.info {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+/* ---------- Responsive Header & Navigation ---------- */
+@media (max-width: 900px) {
+  .nav-context-bar {
+    display: none;
+  }
+
+  .nav-row {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.5625rem;
+  }
+}
+

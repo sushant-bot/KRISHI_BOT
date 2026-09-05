@@ -1,19 +1,32 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent
 
 
 class Settings(BaseSettings):
     app_name: str = "AgroVisor Edge API"
     environment: str = "development"
     database_url: str = "sqlite:///./agrovisor.db"
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @property
+    def resolved_database_url(self) -> str:
+        if self.database_url.startswith("sqlite:///"):
+            raw_path = self.database_url[len("sqlite:///"):]
+            path_obj = Path(raw_path)
+            if not path_obj.is_absolute():
+                abs_path = (BACKEND_DIR / path_obj).resolve().as_posix()
+                return f"sqlite:///{abs_path}"
+        return self.database_url
 
 
 @lru_cache
