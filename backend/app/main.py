@@ -13,6 +13,7 @@ from app.routes import (
     images,
     irrigation,
     sensors,
+    translation,
     zones,
 )
 from app.services.farm import ConflictError, NotFoundError
@@ -55,3 +56,4 @@ app.include_router(decisions.router, prefix="/api")
 app.include_router(decisions.zone_router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
 app.include_router(digital_twin.router, prefix="/api")
+app.include_router(translation.router, prefix="/api")

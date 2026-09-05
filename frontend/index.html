@@ -26,8 +26,8 @@
       <a href="#overview" class="nav-brand-compact" onclick="navigateTo('overview', event)">
         <span class="material-symbols-outlined brand-icon">eco</span>
         <div class="brand-text-col">
-          <span class="brand-title">AGROVISOR EDGE</span>
-          <span class="brand-subtitle">FARM INTELLIGENCE SYSTEM</span>
+          <span class="brand-title" data-i18n="brand_title">AGROVISOR EDGE</span>
+          <span class="brand-subtitle" data-i18n="brand_subtitle">FARM INTELLIGENCE SYSTEM</span>
         </div>
       </a>
 
@@ -38,7 +38,7 @@
         </select>
         <div class="rover-status-pill" title="Autonomous rover hardware demo mode.">
           <span class="rover-dot"></span>
-          <span>Rover: Demo</span>
+          <span data-i18n="rover_status">Rover: Demo</span>
         </div>
         <div class="connection-indicator">
           <span id="connection-dot" class="connection-dot"></span>
@@ -46,8 +46,35 @@
         </div>
       </div>
 
-      <!-- Right Controls: Single MENU + button and Light/Dark Toggle -->
+      <!-- Right Controls: View Mode Switcher + Language Selector + Theme Toggle + Single MENU + Button -->
       <div class="nav-row__right">
+        <!-- Farmer View / Technical View Toggle -->
+        <button type="button" class="view-mode-toggle-btn farmer-active" id="view-mode-toggle-btn" onclick="toggleViewMode()" title="Switch between Farmer View and Technical View" aria-label="Toggle Farmer View and Technical View">
+          <span class="view-mode-icon" id="view-mode-icon">👨‍🌾</span>
+          <span class="view-mode-label" id="view-mode-label">Farmer View</span>
+        </button>
+
+        <!-- Language Selector (9 Indian Languages) -->
+        <div class="language-selector-wrap" title="Select Farmer Explanation Language">
+          <select id="language-selector" class="language-select-nav" onchange="handleLanguageChange(this.value)" aria-label="Select Language">
+            <option value="en">English</option>
+            <option value="hi" selected>हिन्दी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+          </select>
+        </div>
+
+        <!-- Light / Dark Theme Toggle -->
+        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark mode" title="Toggle Light/Dark Theme">
+          <span class="theme-toggle-glyph">◐</span>
+        </button>
+
+        <!-- Single Kinetic MENU + Button -->
         <button type="button" class="nav-close-btn" id="kinetic-menu-toggle-btn" onclick="toggleKineticMenu()" aria-label="Toggle navigation menu">
           <div class="menu-button-text">
             <p class="p-large">Menu</p>
@@ -63,10 +90,6 @@
               <path d="M10 8.66667L8.66667 8.66667L8.66667 10C8.66667 9.26362 9.26362 8.66667 10 8.66667Z" fill="currentColor"></path>
             </svg>
           </div>
-        </button>
-
-        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark mode" title="Toggle Light/Dark Theme">
-          <span class="theme-toggle-glyph">◐</span>
         </button>
       </div>
     </div>
@@ -220,22 +243,13 @@
           <div class="overlay-gradient"></div>
         </div>
         <div class="hero-content" style="margin-top: 2rem;">
-          <span class="text-label-sm" style="color: var(--agro-green); letter-spacing: 0.12em; display: block; margin-bottom: 0.75rem;">
-            MOBILE EDGE-AI FARM INTELLIGENCE & PRECISION IRRIGATION
-          </span>
-          <h1 class="text-display-xl animate-in" style="font-size: 3.5rem; margin-bottom: 1rem;">
-            AgroVisor Edge
-          </h1>
-          <p class="text-body-lg animate-in animate-delay-1" style="max-width: 38rem; margin-bottom: 2rem;">
-            Autonomous crop monitoring, edge vision diagnosis, closed-loop irrigation verification, and cyber-physical Digital Twin aggregation.
-          </p>
+          <span class="text-label-sm" data-i18n="hero_tag" style="color: var(--agro-green); letter-spacing: 0.12em; display: block; margin-bottom: 0.75rem;">MOBILE EDGE-AI FARM INTELLIGENCE & PRECISION IRRIGATION</span>
+<!-- i18n tag will be on parent -->
+          <h1 class="text-display-xl animate-in" data-i18n="hero_title" style="font-size: 3.5rem; margin-bottom: 1rem;">AgroVisor Edge</h1>
+          <p class="text-body-lg animate-in animate-delay-1" data-i18n="hero_desc" style="max-width: 38rem; margin-bottom: 2rem;">Autonomous crop monitoring, edge vision diagnosis, closed-loop irrigation verification, and cyber-physical Digital Twin aggregation.</p>
           <div class="hero-actions animate-in animate-delay-2">
-            <button class="btn-pill-filled" onclick="document.getElementById('operational-overview').scrollIntoView({behavior:'smooth'})">
-              Enter Dashboard
-            </button>
-            <button class="btn-outline" onclick="navigateTo('digital-twin')">
-              Open Digital Twin
-            </button>
+            <button class="btn-pill-filled" data-i18n="hero_enter" onclick="document.getElementById('operational-overview').scrollIntoView({behavior:'smooth'})">Enter Dashboard</button>
+            <button class="btn-outline" data-i18n="hero_open_twin" onclick="navigateTo('digital-twin')">Open Digital Twin</button>
           </div>
         </div>
       </section>
@@ -245,24 +259,17 @@
         <!-- Header: Green Valley Farm ● System Online -->
         <div class="view-header">
           <div class="view-header-title">
-            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
-              AGROVISOR EDGE · FARM INTELLIGENCE PLATFORM
-            </span>
+            <span class="text-label-sm" data-i18n="platform_subtitle" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">AGROVISOR EDGE · FARM INTELLIGENCE PLATFORM</span>
             <h2 id="overview-farm-title">Green Valley Farm</h2>
             <p style="display: flex; align-items: center; gap: 0.5rem;">
               <span class="connection-dot connected" style="width: 8px; height: 8px;"></span>
-              <span style="color: var(--agro-green); font-weight: 600;">System Online</span>
-              <span style="color: var(--outline);">· Nashik Agro Valley, Maharashtra</span>
+              <span data-i18n="system_online" style="color: var(--agro-green); font-weight: 600;">System Online</span>
+              <span data-i18n="location_tag" style="color: var(--outline);">· Nashik Agro Valley, Maharashtra</span>
             </p>
           </div>
           <div class="view-header-actions">
-            <button class="btn-outline" onclick="loadDashboard()">
-              <span class="material-symbols-outlined" style="font-size: 0.875rem; vertical-align: middle; margin-right: 0.25rem;">refresh</span>
-              Sync Farm Data
-            </button>
-            <button class="btn-pill-filled" onclick="navigateTo('irrigation')">
-              Control Irrigation
-            </button>
+            <button class="btn-outline" data-i18n-html="btn_sync_data" onclick="loadDashboard()"><span class="material-symbols-outlined" style="font-size: 0.875rem; vertical-align: middle; margin-right: 0.25rem;">refresh</span>Sync Farm Data</button>
+            <button class="btn-pill-filled" data-i18n="btn_control_irrig" onclick="navigateTo('irrigation')">Control Irrigation</button>
           </div>
         </div>
 
@@ -271,55 +278,55 @@
           <!-- KPI 1: Farm Health -->
           <div class="kpi-card animate-in animate-delay-1">
             <div class="kpi-label">
-              <span>Farm Health</span>
+              <span data-i18n="kpi_health">Farm Health</span>
               <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-green);">vital_signs</span>
             </div>
             <div class="kpi-value" id="kpi-health-score">72<span style="font-size: 1.125rem; color: var(--outline);"> / 100</span></div>
             <div class="kpi-sub">
-              <span class="twin-badge healthy" style="padding: 0.1rem 0.5rem;">Optimal Target</span>
+              <span class="twin-badge healthy" data-i18n="kpi_health_opt" style="padding: 0.1rem 0.5rem;">Optimal Target</span>
             </div>
           </div>
 
           <!-- KPI 2: Zones Monitored -->
           <div class="kpi-card animate-in animate-delay-1">
             <div class="kpi-label">
-              <span>Zones</span>
+              <span data-i18n="kpi_zones">Zones</span>
               <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-blue);">grid_view</span>
             </div>
             <div class="kpi-value" id="kpi-zones-count">3 / 3</div>
             <div class="kpi-sub">
-              <span style="color: var(--agro-green);">● All Monitored</span>
+              <span data-i18n="kpi_zones_all" style="color: var(--agro-green);">● All Monitored</span>
             </div>
           </div>
 
           <!-- KPI 3: Water Used Today -->
           <div class="kpi-card animate-in animate-delay-2">
             <div class="kpi-label">
-              <span>Water Used</span>
+              <span data-i18n="kpi_water">Water Used</span>
               <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-blue);">water_drop</span>
             </div>
             <div class="kpi-value" id="kpi-water-used">10.0<span style="font-size: 1.125rem; color: var(--outline);"> L</span></div>
             <div class="kpi-sub">
-              <span>Delivered Today</span>
+              <span data-i18n="kpi_water_today">Delivered Today</span>
             </div>
           </div>
 
           <!-- KPI 4: Alerts -->
           <div class="kpi-card animate-in animate-delay-2" style="cursor: pointer;" onclick="navigateTo('alerts')">
             <div class="kpi-label">
-              <span>Alerts</span>
+              <span data-i18n="kpi_alerts">Alerts</span>
               <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-amber);">warning</span>
             </div>
             <div class="kpi-value" id="kpi-alerts-count" style="color: var(--agro-amber);">1</div>
             <div class="kpi-sub">
-              <span style="color: var(--agro-amber);">⚠ High Severity</span>
+              <span data-i18n="kpi_alerts_high" style="color: var(--agro-amber);">⚠ High Severity</span>
             </div>
           </div>
 
           <!-- KPI 5: Irrigation Status -->
           <div class="kpi-card animate-in animate-delay-3" style="cursor: pointer;" onclick="navigateTo('irrigation')">
             <div class="kpi-label">
-              <span>Irrigation</span>
+              <span data-i18n="kpi_irrig">Irrigation</span>
               <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--agro-green);">valve</span>
             </div>
             <div class="kpi-value" id="kpi-irrig-status" style="font-size: 1.75rem; color: var(--agro-green);">ACTIVE</div>
@@ -328,6 +335,9 @@
             </div>
           </div>
         </div>
+
+        <!-- Farmer Explanation & Advisory Banner (Dynamic Language) -->
+        <div id="overview-farmer-advisory-container"></div>
 
         <!-- HERO COMPONENT: Large Digital Twin Map -->
         <div class="twin-map-hero animate-in animate-delay-2">
@@ -395,6 +405,9 @@
           </div>
         </div>
 
+        <!-- Farmer Explanation & Advisory Banner (Dynamic Language) -->
+        <div id="twin-farmer-advisory-container"></div>
+
         <!-- Spatial Farm Grid -->
         <div class="twin-map-hero" style="min-height: 420px; padding: 2.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -402,7 +415,7 @@
               <span class="material-symbols-outlined" style="color: var(--agro-green);">crop_free</span>
               <span style="font-family: var(--font-display); font-size: 1.125rem; font-weight: 600;">FARM ZONES TOPOLOGY</span>
             </div>
-            <span class="text-label-sm" style="color: var(--outline);">Click zone card to open Inspector Drawer</span>
+            <span class="text-label-sm" data-i18n="twin_click_hint" style="color: var(--outline);">Click zone card to open Inspector Drawer</span>
           </div>
 
           <div id="full-twin-zones-grid" class="twin-zones-container">
@@ -459,6 +472,9 @@
             </button>
           </div>
         </div>
+
+        <!-- Farmer Explanation & Advisory Banner (Dynamic Language) -->
+        <div id="zone-farmer-advisory-container"></div>
 
         <!-- Current Conditions (3 Cards) -->
         <div class="conditions-grid">
@@ -628,16 +644,17 @@
       <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
         <div class="view-header">
           <div class="view-header-title">
-            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
-              COMPUTER VISION & LEAF PATHOLOGY
-            </span>
-            <h2>AI Crop Vision Diagnosis</h2>
-            <p>High-resolution optical scans processed by on-farm Edge-AI models for early disease detection, foliar stress, and phenological stage tracking.</p>
+            <span class="text-label-sm" data-i18n="ai_page_tag" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">COMPUTER VISION & LEAF PATHOLOGY</span>
+            <h2 data-i18n="ai_page_title">AI Crop Vision Diagnosis</h2>
+            <p data-i18n="ai_page_desc">High-resolution optical scans processed by on-farm Edge-AI models for early disease detection, foliar stress, and phenological stage tracking.</p>
           </div>
           <div class="view-header-actions">
-            <span class="ai-pill-tag simulated">Demo Simulation Provider Active</span>
+            <span class="ai-pill-tag simulated" data-i18n="demo_provider_tag">Demo Simulation Provider Active</span>
           </div>
         </div>
+
+        <!-- Farmer Explanation & Advisory Banner (Dynamic Language) -->
+        <div id="ai-farmer-advisory-container"></div>
 
         <!-- AI Gallery & Deep Dive -->
         <div class="vision-grid" style="margin-bottom: 3rem;">
@@ -659,39 +676,35 @@
 
           <div class="ai-analysis-panel">
             <div>
-              <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.75rem;">
-                Pathological Assessment
-              </h3>
+              <h3 data-i18n="pathology_assessment" style="font-family: var(--font-display); font-size: 1.5rem; color: var(--primary); margin-bottom: 0.75rem;">Pathological Assessment</h3>
               <p style="color: var(--on-surface-variant); font-size: 0.875rem; margin-bottom: 1.5rem; line-height: 1.6;">
                 Multispectral analysis indicates localized necrotic lesions consistent with early fungal spore development. Low humidity drip irrigation recommended.
               </p>
 
               <div class="ai-metric-row">
-                <span class="ai-metric-label">Diagnosis</span>
+                <span class="ai-metric-label" data-i18n="diagnosis_label">Diagnosis</span>
                 <span class="ai-metric-val" style="color: var(--agro-red); font-size: 1.125rem;">Early Blight (Alternaria solani)</span>
               </div>
               <div class="ai-metric-row">
-                <span class="ai-metric-label">Confidence Score</span>
+                <span class="ai-metric-label" data-i18n="confidence_score">Confidence Score</span>
                 <span class="ai-metric-val" style="color: var(--agro-green); font-size: 1.125rem;">91.4%</span>
               </div>
               <div class="ai-metric-row">
-                <span class="ai-metric-label">Crop Phenology</span>
+                <span class="ai-metric-label" data-i18n="crop_phenology">Crop Phenology</span>
                 <span class="ai-metric-val">Vegetative Stage (V3)</span>
               </div>
               <div class="ai-metric-row">
-                <span class="ai-metric-label">Canopy Coverage</span>
+                <span class="ai-metric-label" data-i18n="canopy_coverage">Canopy Coverage</span>
                 <span class="ai-metric-val">78.2%</span>
               </div>
               <div class="ai-metric-row">
-                <span class="ai-metric-label">Recommended Action</span>
+                <span class="ai-metric-label" data-i18n="recommended_action">Recommended Action</span>
                 <span class="ai-metric-val" style="color: var(--primary);">Soil-Level Drip · Avoid Foliage Wetting</span>
               </div>
             </div>
 
             <div style="margin-top: 2rem;">
-              <button class="btn-pill-filled" style="width: 100%; text-align: center;" onclick="navigateTo('irrigation')">
-                Proceed to Precision Irrigation →
-              </button>
+              <button class="btn-pill-filled" data-i18n="btn_proceed_irrig" style="width: 100%; text-align: center;" onclick="navigateTo('irrigation')">Proceed to Precision Irrigation →</button>
             </div>
           </div>
         </div>
@@ -742,36 +755,27 @@
       <section class="section" style="max-width: var(--container-max); margin: 0 auto; padding-top: 1rem;">
         <div class="view-header">
           <div class="view-header-title">
-            <span class="text-label-sm" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">
-              ACTUATION & PHYSICAL FEEDBACK
-            </span>
-            <h2>Irrigation Control Center</h2>
-            <p>Target volume dispatch, real-time solenoid valve actuation, and closed-loop flow meter verification.</p>
+            <span class="text-label-sm" data-i18n="irrig_tag" style="color: var(--outline); letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">ACTUATION & PHYSICAL FEEDBACK</span>
+            <h2 data-i18n="irrig_title">Irrigation Control Center</h2>
+            <p data-i18n="irrig_desc">Target volume dispatch, real-time solenoid valve actuation, and closed-loop flow meter verification.</p>
           </div>
         </div>
+
+        <!-- Farmer Explanation & Advisory Banner (Dynamic Language) -->
+        <div id="irrigation-farmer-advisory-container"></div>
 
         <!-- DEMO SIMULATION BAR (For Judges) -->
         <div class="demo-sim-bar animate-in">
           <div class="demo-sim-title">
             <span class="material-symbols-outlined">science</span>
             <div>
-              <span style="font-weight: 700; color: var(--primary); font-size: 0.9375rem; display: block;">
-                JUDGE DEMONSTRATION: Physical Flow Feedback Loop
-              </span>
-              <span style="font-size: 0.75rem; color: var(--on-surface-variant);">
-                Simulate real physical responses from the edge flow meter to test target completion vs fault alert generation.
-              </span>
+              <span data-i18n="judge_demo_title" style="font-weight: 700; color: var(--primary); font-size: 0.9375rem; display: block;">JUDGE DEMONSTRATION: Physical Flow Feedback Loop</span>
+              <span data-i18n="judge_demo_desc" style="font-size: 0.75rem; color: var(--on-surface-variant);">Simulate real physical responses from the edge flow meter to test target completion vs fault alert generation.</span>
             </div>
           </div>
           <div class="demo-sim-actions">
-            <button id="btn-sim-normal" class="btn-sim-success" onclick="runSimulateNormalFlow()">
-              <span class="material-symbols-outlined" style="font-size: 1rem;">water_drop</span>
-              ▶ Simulate Normal Flow (2.4 L/min)
-            </button>
-            <button id="btn-sim-fault" class="btn-sim-fault" onclick="runSimulateFlowFault()">
-              <span class="material-symbols-outlined" style="font-size: 1rem;">error</span>
-              ⚠ Simulate Flow Fault (Pump ON, Flow 0)
-            </button>
+            <button id="btn-sim-normal" class="btn-sim-success" data-i18n="btn_sim_normal" onclick="runSimulateNormalFlow()">▶ Simulate Normal Flow (2.4 L/min)</button>
+            <button id="btn-sim-fault" class="btn-sim-fault" data-i18n="btn_sim_fault" onclick="runSimulateFlowFault()">⚠ Simulate Flow Fault (Pump ON, Flow 0)</button>
           </div>
         </div>
 
@@ -803,20 +807,20 @@
           <!-- Command Form Card -->
           <div class="bento-card" style="padding: 2.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem;">
-              <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">Dispatch Command</h3>
+              <h3 data-i18n="dispatch_command" style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary);">Dispatch Command</h3>
               <span id="irrig-form-status-badge" class="twin-badge healthy">READY</span>
             </div>
 
             <form id="irrigation-form-page">
               <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" for="irrig-page-zone-select">Target Zone</label>
+                <label class="form-label" data-i18n="target_zone" for="irrig-page-zone-select">Target Zone</label>
                 <select id="irrig-page-zone-select" class="form-select" required>
                   <option value="">Loading zones...</option>
                 </select>
               </div>
 
               <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" for="irrig-page-action-select">Command Action</label>
+                <label class="form-label" data-i18n="command_action" for="irrig-page-action-select">Command Action</label>
                 <select id="irrig-page-action-select" class="form-select" required>
                   <option value="START">START IRRIGATION</option>
                   <option value="STOP">STOP IRRIGATION</option>
@@ -890,13 +894,13 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Event ID</th>
-                  <th>Zone</th>
-                  <th>Command</th>
+                  <th data-i18n="th_event_id">Event ID</th>
+                  <th data-i18n="th_zone">Zone</th>
+                  <th data-i18n="th_command">Command</th>
                   <th>Target</th>
                   <th>Delivered</th>
-                  <th>Status</th>
-                  <th>Timestamp</th>
+                  <th data-i18n="th_status">Status</th>
+                  <th data-i18n="th_timestamp">Timestamp</th>
                 </tr>
               </thead>
               <tbody id="irrigation-history-tbody">
@@ -1032,7 +1036,7 @@
   <aside id="inspector-drawer" class="inspector-drawer" aria-label="Zone Inspector">
     <div class="inspector-header">
       <div>
-        <span class="text-label-sm" style="color: var(--agro-green); letter-spacing: 0.08em; display: block;">DIGITAL TWIN INSPECTOR</span>
+        <span class="text-label-sm" data-i18n="inspector_title" style="color: var(--agro-green); letter-spacing: 0.08em; display: block;">DIGITAL TWIN INSPECTOR</span>
         <h3 id="inspector-zone-name" style="font-family: var(--font-display); font-size: 1.375rem; color: var(--primary);">B1 — North Field</h3>
       </div>
       <button class="inspector-close-btn" onclick="closeInspector()" aria-label="Close Inspector">

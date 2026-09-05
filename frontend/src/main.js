@@ -26,6 +26,7 @@ import {
   getZoneTwin,
   ApiError,
 } from './api.js';
+import { translationService, SUPPORTED_LANGUAGES } from './translationService.js';
 
 // ──────────── Application State ────────────
 const state = {
@@ -59,6 +60,7 @@ const state = {
 // ──────────── Lifecycle Initialization ────────────
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
+  initLanguageAndViews();
   initScrollEffects();
   initKineticNavigation();
   initRouting();
@@ -123,6 +125,108 @@ function initTheme() {
       }
     });
   }
+}
+
+// ──────────── Farmer View & Multilingual Translation Engine ────────────
+export function handleLanguageChange(langCode) {
+  translationService.setLanguage(langCode);
+  translationService.applyLanguageToDom();
+  updateLanguageUI();
+  renderCurrentView();
+
+  // If inspector is open, re-render inspector drawer in new language
+  const drawer = document.getElementById('inspector-drawer');
+  if (drawer && drawer.classList.contains('open')) {
+    const zoneId = state.selectedZoneId || (state.zones[0] && state.zones[0].id) || 1;
+    openInspector(zoneId);
+  }
+
+  const langObj = SUPPORTED_LANGUAGES.find((l) => l.code === langCode);
+  showToast(`Language switched to ${langObj?.nativeName || langCode}`, 'info');
+}
+window.handleLanguageChange = handleLanguageChange;
+
+export function toggleViewMode() {
+  const next = translationService.toggleViewMode();
+  updateViewModeUI();
+  renderCurrentView();
+  showToast(`Switched to ${next === 'farmer' ? 'Farmer View 👨‍🌾' : 'Technical View ⚙️'}`, 'info');
+}
+window.toggleViewMode = toggleViewMode;
+
+export function setViewMode(mode) {
+  translationService.setViewMode(mode);
+  updateViewModeUI();
+  renderCurrentView();
+}
+window.setViewMode = setViewMode;
+
+function updateViewModeUI() {
+  const mode = translationService.getViewMode();
+  document.documentElement.setAttribute('data-view-mode', mode);
+
+  const toggleBtn = document.getElementById('view-mode-toggle-btn');
+  const iconEl = document.getElementById('view-mode-icon');
+  const labelEl = document.getElementById('view-mode-label');
+
+  if (toggleBtn) {
+    if (mode === 'farmer') {
+      toggleBtn.classList.remove('technical-active');
+      toggleBtn.classList.add('farmer-active');
+      if (iconEl) iconEl.textContent = '👨‍🌾';
+      if (labelEl) labelEl.textContent = translationService.t('farmer_view', 'Farmer View');
+      toggleBtn.setAttribute('title', 'Currently in Farmer View (Click to switch to Technical View)');
+    } else {
+      toggleBtn.classList.remove('farmer-active');
+      toggleBtn.classList.add('technical-active');
+      if (iconEl) iconEl.textContent = '⚙️';
+      if (labelEl) labelEl.textContent = translationService.t('technical_view', 'Technical View');
+      toggleBtn.setAttribute('title', 'Currently in Technical View (Click to switch to Farmer View)');
+    }
+  }
+}
+
+function updateLanguageUI() {
+  const lang = translationService.getLanguage();
+  translationService.applyLanguageToDom();
+  const select = document.getElementById('language-selector');
+  if (select && select.value !== lang) {
+    select.value = lang;
+  }
+
+  // Update kinetic menu item labels with localized terms
+  const navMap = [
+    { num: '01', key: 'nav_overview', fallback: 'Overview' },
+    { num: '02', key: 'nav_digital_twin', fallback: 'Digital Twin' },
+    { num: '03', key: 'nav_zones', fallback: 'Zones' },
+    { num: '04', key: 'nav_ai_analysis', fallback: 'AI Analysis' },
+    { num: '05', key: 'nav_irrigation', fallback: 'Smart Irrigation' },
+    { num: '06', key: 'nav_alerts', fallback: 'Alerts & Advisory' },
+    { num: '07', key: 'nav_analytics', fallback: 'Analytics' },
+  ];
+
+  const menuLinks = document.querySelectorAll('.menu-list-item .nav-link');
+  navMap.forEach((item, idx) => {
+    const link = menuLinks[idx];
+    const textEl = link?.querySelector('.nav-link-text');
+    if (textEl) {
+      textEl.textContent = translationService.t(item.key, item.fallback);
+    }
+  });
+
+  updateViewModeUI();
+}
+
+function initLanguageAndViews() {
+  translationService.applyLanguageToDom();
+  updateLanguageUI();
+  updateViewModeUI();
+
+  translationService.subscribe(() => {
+    translationService.applyLanguageToDom();
+    updateLanguageUI();
+    updateViewModeUI();
+  });
 }
 
 // ──────────── Scroll Header Effects ────────────
@@ -484,6 +588,54 @@ function renderCurrentView() {
   }
 }
 
+// ──────────── Farmer Advisory HTML Component ────────────
+function renderFarmerAdvisoryHtml({
+  badge = '👨‍🌾 FARMER ADVISORY',
+  title = '',
+  happening = '',
+  why = '',
+  action = '',
+  problem = '',
+  urgencyLabel = '',
+  urgencyLevel = 'normal',
+}) {
+  const viewMode = translationService.getViewMode();
+  const isFarmer = viewMode === 'farmer';
+  const modeBadge = isFarmer
+    ? `👨‍🌾 ${translationService.t('farmer_view', 'Farmer View')}`
+    : `⚙️ ${translationService.t('technical_view', 'Technical View')}`;
+
+  return `
+    <section class="farmer-advisory-card urgency-${urgencyLevel} ${isFarmer ? 'farmer-highlight' : 'technical-subtle'}" aria-label="Farmer Advisory">
+      <div class="farmer-advisory-header">
+        <div class="farmer-advisory-meta">
+          <span class="farmer-badge">${escapeHtml(badge)} · ${escapeHtml(modeBadge)}</span>
+          <span class="farmer-urgency-pill ${urgencyLevel}">${escapeHtml(urgencyLabel || (urgencyLevel === 'normal' ? 'Nominal' : 'Attention'))}</span>
+        </div>
+        <h4 class="farmer-advisory-title">${escapeHtml(title)}</h4>
+      </div>
+      <div class="farmer-qa-grid">
+        <div class="farmer-qa-item">
+          <span class="farmer-qa-question">${escapeHtml(translationService.t('what_is_happening'))}</span>
+          <p class="farmer-qa-answer">${escapeHtml(happening)}</p>
+        </div>
+        <div class="farmer-qa-item">
+          <span class="farmer-qa-question">${escapeHtml(translationService.t('why_it_happens'))}</span>
+          <p class="farmer-qa-answer">${escapeHtml(why)}</p>
+        </div>
+        <div class="farmer-qa-item">
+          <span class="farmer-qa-question">${escapeHtml(translationService.t('what_to_do'))}</span>
+          <p class="farmer-qa-answer" style="color: var(--agro-green); font-weight: 600;">${escapeHtml(action)}</p>
+        </div>
+        <div class="farmer-qa-item">
+          <span class="farmer-qa-question">${escapeHtml(translationService.t('is_there_a_problem'))}</span>
+          <p class="farmer-qa-answer">${escapeHtml(problem)}</p>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 // ════════════════════════════════════════════════════════════
 // 1. PAGE: OVERVIEW (Observe)
 // ════════════════════════════════════════════════════════════
@@ -543,6 +695,33 @@ function renderOverviewPage() {
     }
   }
 
+  // Render Farmer Explanation Card for Overview
+  const overviewAdvisoryContainer = document.getElementById('overview-farmer-advisory-container');
+  if (overviewAdvisoryContainer) {
+    const b2Twin = state.zoneTwins.find((t) => getZoneCode(t.zone_id) === 'B2') || state.zoneTwins[0];
+    const m = b2Twin?.current?.soil_moisture ?? 24.0;
+    const t = b2Twin?.current?.soil_temperature ?? 33.2;
+    const l = b2Twin?.current?.light_intensity ?? 52000;
+    const zCode = b2Twin ? getZoneCode(b2Twin.zone_id) : 'B2';
+    const explanation = translationService.explainSoil(m, t, l, zCode);
+    const lang = translationService.getLanguage();
+
+    const title = lang === 'hi' ? `खेत की समग्र स्थिति — ज़ोन ${zCode} किसान सलाह` :
+                  lang === 'mr' ? `शेताची सद्यस्थिती — झोन ${zCode} शेतकरी सल्ला` :
+                  `Farm Operational Status & Zone ${zCode} Farmer Advisory`;
+
+    overviewAdvisoryContainer.innerHTML = renderFarmerAdvisoryHtml({
+      badge: lang === 'hi' ? '👨‍🌾 किसान दैनिक सलाह' : lang === 'mr' ? '👨‍🌾 शेतकरी सल्ला' : '👨‍🌾 FARMER ADVISORY',
+      title,
+      happening: explanation.happening,
+      why: explanation.why,
+      action: explanation.action,
+      problem: explanation.problem,
+      urgencyLabel: explanation.urgencyLabel,
+      urgencyLevel: explanation.urgency,
+    });
+  }
+
   renderOverviewTwinMap();
   renderFarmFeatureCard();
   renderZoneBentoCards();
@@ -585,26 +764,26 @@ function renderOverviewTwinMap() {
 
         <div class="twin-node-metrics">
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Moisture</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("sensor_moisture", "Moisture"))}</div>
             <div class="twin-node-stat-val ${moisture < 30 ? 'amber' : 'green'}">${moisture.toFixed(1)}%</div>
           </div>
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Temperature</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("sensor_temp", "Temperature"))}</div>
             <div class="twin-node-stat-val">${temp.toFixed(1)}°C</div>
           </div>
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Irrigation</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("kpi_irrig", "Irrigation"))}</div>
             <div class="twin-node-stat-val ${irrigStatus === 'ACTIVE' ? 'green' : ''}">${irrigStatus}</div>
           </div>
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Alerts</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("kpi_alerts", "Alerts"))}</div>
             <div class="twin-node-stat-val ${hasAlert ? 'red' : 'green'}">${hasAlert ? '1 High' : 'Nominal'}</div>
           </div>
         </div>
 
         <div style="margin-top: 1rem; text-align: right;">
           <span style="font-size: 0.6875rem; color: var(--agro-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">
-            Inspect Zone Details →
+            ${escapeHtml(translationService.t("btn_zone_details", "Inspect Zone Details →"))}
           </span>
         </div>
       </div>
@@ -684,7 +863,7 @@ function renderZoneBentoCards() {
 
           <div class="reveal-data" style="margin-top: 0;">
             <div class="reveal-datum">
-              <div class="reveal-datum-label">Soil Moisture</div>
+              <div class="reveal-datum-label">${escapeHtml(translationService.t("sensor_moisture", "Soil Moisture"))}</div>
               <div class="reveal-datum-value ${color}">${moisture.toFixed(1)}%</div>
             </div>
             <div class="reveal-datum">
@@ -789,19 +968,19 @@ function renderDigitalTwinView() {
 
         <div class="twin-node-metrics">
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Soil Moisture</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("sensor_moisture", "Soil Moisture"))}</div>
             <div class="twin-node-stat-val ${moisture < 30 ? 'amber' : 'green'}">${moisture.toFixed(1)}%</div>
           </div>
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Temperature</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("sensor_temp", "Temperature"))}</div>
             <div class="twin-node-stat-val">${temp.toFixed(1)}°C</div>
           </div>
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">Irrigation</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("kpi_irrig", "Irrigation"))}</div>
             <div class="twin-node-stat-val ${irrigStatus === 'ACTIVE' ? 'green' : ''}">${irrigStatus}</div>
           </div>
           <div class="twin-node-stat">
-            <div class="twin-node-stat-label">AI Status</div>
+            <div class="twin-node-stat-label">${escapeHtml(translationService.t("ai_diag_title", "AI Status"))}</div>
             <div class="twin-node-stat-val">${twin?.ai?.crop_health || 'Evaluated'}</div>
           </div>
         </div>
@@ -855,6 +1034,29 @@ function renderDigitalTwinView() {
       `;
     }).join('');
   }
+
+  // Render Digital Twin Farmer Advisory Container
+  const twinAdvisoryContainer = document.getElementById('twin-farmer-advisory-container');
+  if (twinAdvisoryContainer) {
+    const b2Twin = state.zoneTwins.find((t) => getZoneCode(t.zone_id) === 'B2') || state.zoneTwins[0];
+    const m = b2Twin?.current?.soil_moisture ?? 24.0;
+    const t = b2Twin?.current?.soil_temperature ?? 33.2;
+    const l = b2Twin?.current?.light_intensity ?? 52000;
+    const zCode = b2Twin ? getZoneCode(b2Twin.zone_id) : 'B2';
+    const explanation = translationService.explainSoil(m, t, l, zCode);
+    const lang = translationService.getLanguage();
+
+    twinAdvisoryContainer.innerHTML = renderFarmerAdvisoryHtml({
+      badge: lang === 'hi' ? '👨‍🌾 डिजिटल ट्विन किसान मार्गदर्शन' : lang === 'mr' ? '👨‍🌾 डिजिटल ट्विन शेतकरी मार्गदर्शन' : '👨‍🌾 DIGITAL TWIN FARMER ADVISORY',
+      title: lang === 'hi' ? `डिजिटल ट्विन स्थिति — ज़ोन ${zCode} किसान सलाह` : `Digital Twin Cyber-Physical Insights — Zone ${zCode}`,
+      happening: explanation.happening,
+      why: explanation.why,
+      action: explanation.action,
+      problem: explanation.problem,
+      urgencyLabel: explanation.urgencyLabel,
+      urgencyLevel: explanation.urgency,
+    });
+  }
 }
 
 export function openInspector(zoneId) {
@@ -896,27 +1098,50 @@ export function openInspector(zoneId) {
   const flowRate = irrigState === 'ACTIVE' ? '2.4 L/min' : '0.0 L/min';
   const alertsCount = twin?.alerts?.length ?? (zone.code === 'B2' ? 1 : 0);
 
+  // Farmer Explanation for Inspector Drawer
+  const soilExp = translationService.explainSoil(moisture, temp, light, zone.code);
+  const aiExp = translationService.explainAi({
+    disease_prediction: disease,
+    confidence: parseFloat(confidence) / 100 || 0.85,
+    growth_stage: growthStage,
+  });
+  const lang = translationService.getLanguage();
+
   if (content) {
     content.innerHTML = `
+      <!-- Farmer View Card at top of Inspector Drawer -->
+      <div style="margin-bottom: 1.5rem;">
+        ${renderFarmerAdvisoryHtml({
+          badge: lang === 'hi' ? `👨‍🌾 किसान दृश्य (ज़ोन ${zone.code})` : `👨‍🌾 FARMER VIEW (ZONE ${zone.code})`,
+          title: aiExp.hasSuspicion ? aiExp.title : soilExp.happening,
+          happening: `${soilExp.happening} ${aiExp.explanation}`,
+          why: soilExp.why,
+          action: `${soilExp.action} ${aiExp.advice}`,
+          problem: soilExp.problem,
+          urgencyLabel: soilExp.urgencyLabel,
+          urgencyLevel: soilExp.urgency,
+        })}
+      </div>
+
       <div>
         <span class="text-label-sm" style="color: var(--outline); display: block; margin-bottom: 0.5rem;">
-          PHYSICAL TELEMETRY (ZONE ID: ${zone.id})
+          ${escapeHtml(translationService.t("physical_telemetry", "PHYSICAL TELEMETRY"))} (ZONE ID: ${zone.id})
         </span>
         <div class="reveal-data" style="margin-top: 0; gap: 0.75rem;">
           <div class="reveal-datum">
-            <div class="reveal-datum-label">Farm Health Score</div>
+            <div class="reveal-datum-label">${escapeHtml(translationService.t("kpi_health", "Farm Health Score"))}</div>
             <div class="reveal-datum-value" style="font-size: 1.25rem; color: var(--primary);">${scoreVal} / 100</div>
           </div>
           <div class="reveal-datum">
-            <div class="reveal-datum-label">Soil Moisture</div>
+            <div class="reveal-datum-label">${escapeHtml(translationService.t("sensor_moisture", "Soil Moisture"))}</div>
             <div class="reveal-datum-value ${moisture < 30 ? 'amber' : 'green'}" style="font-size: 1.25rem;">${moisture.toFixed(1)}%</div>
           </div>
           <div class="reveal-datum">
-            <div class="reveal-datum-label">Soil Temperature</div>
+            <div class="reveal-datum-label">${escapeHtml(translationService.t("sensor_temp", "Soil Temperature"))}</div>
             <div class="reveal-datum-value" style="font-size: 1.25rem;">${temp.toFixed(1)}°C</div>
           </div>
           <div class="reveal-datum">
-            <div class="reveal-datum-label">Light Intensity</div>
+            <div class="reveal-datum-label">${escapeHtml(translationService.t("sensor_light", "Light Intensity"))}</div>
             <div class="reveal-datum-value" style="font-size: 1.25rem;">${Math.round(light).toLocaleString()} lux</div>
           </div>
         </div>
@@ -927,22 +1152,22 @@ export function openInspector(zoneId) {
 
       <div style="border-top: 1px solid var(--card-border); padding-top: 1.25rem;">
         <span class="text-label-sm" style="color: var(--outline); display: block; margin-bottom: 0.75rem;">
-          EDGE AI & PATHOLOGY ANALYSIS
+          ${escapeHtml(translationService.t("ai_page_tag", "EDGE AI & PATHOLOGY ANALYSIS"))}
         </span>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Crop Health</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("kpi_health", "Crop Health"))}</span>
           <span class="ai-metric-val ${aiHealth === 'Healthy' ? 'green' : 'amber'}">${aiHealth}</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Detected Issue</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("diagnosis_label", "Detected Issue"))}</span>
           <span class="ai-metric-val ${disease === 'None Detected' ? 'green' : 'red'}">${disease}</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Confidence</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("confidence_score", "Confidence"))}</span>
           <span class="ai-metric-val" style="color: var(--agro-blue);">${confidence}</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Growth Stage</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("crop_phenology", "Growth Stage"))}</span>
           <span class="ai-metric-val">${growthStage}</span>
         </div>
         <div class="ai-metric-row">
@@ -953,14 +1178,14 @@ export function openInspector(zoneId) {
 
       <div style="border-top: 1px solid var(--card-border); padding-top: 1.25rem;">
         <span class="text-label-sm" style="color: var(--outline); display: block; margin-bottom: 0.75rem;">
-          DECISION MATRIX & STRESS INDICES
+          ${escapeHtml(translationService.t("stress_indices_title", "DECISION MATRIX & STRESS INDICES"))}
         </span>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Irrigation Priority</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("kpi_irrig", "Irrigation Priority"))}</span>
           <span class="ai-metric-val ${irrigPriority === 'HIGH' ? 'red' : irrigPriority === 'MEDIUM' ? 'amber' : 'green'}">${irrigPriority}</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Water Stress</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("stress_indices_title", "Water Stress"))}</span>
           <span class="ai-metric-val ${waterStress === 'HIGH' ? 'red' : 'green'}">${waterStress}</span>
         </div>
         <div class="ai-metric-row">
@@ -979,32 +1204,32 @@ export function openInspector(zoneId) {
 
       <div style="border-top: 1px solid var(--card-border); padding-top: 1.25rem;">
         <span class="text-label-sm" style="color: var(--outline); display: block; margin-bottom: 0.75rem;">
-          ACTUATION & CLOSED-LOOP FLOW STATE
+          ${escapeHtml(translationService.t("irrig_tag", "ACTUATION & CLOSED-LOOP FLOW STATE"))}
         </span>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Irrigation State</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("kpi_irrig", "Irrigation State"))}</span>
           <span class="ai-metric-val ${irrigState === 'ACTIVE' ? 'green' : ''}">${irrigState}</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Flow State</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("verified_flow", "Flow State"))}</span>
           <span class="ai-metric-val" style="color: var(--primary);">${flowRate}</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Water Delivered</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("water_delivered", "Water Delivered"))}</span>
           <span class="ai-metric-val" style="color: var(--agro-blue);">${waterDelivered.toFixed(1)} Liters</span>
         </div>
         <div class="ai-metric-row">
-          <span class="ai-metric-label">Active Alerts</span>
+          <span class="ai-metric-label">${escapeHtml(translationService.t("kpi_alerts", "Active Alerts"))}</span>
           <span class="ai-metric-val ${alertsCount > 0 ? 'red' : 'green'}">${alertsCount} Active</span>
         </div>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: auto; padding-top: 1.5rem;">
         <button class="btn-pill-filled" style="text-align: center;" onclick="closeInspector(); selectAndGoToZone(${zoneId})">
-          Open Zone Details Deep-Dive →
+          ${escapeHtml(translationService.t("btn_zone_details", "Open Zone Details Deep-Dive →"))}
         </button>
         <button class="btn-outline" style="text-align: center;" onclick="closeInspector(); navigateTo('irrigation')">
-          Control Precision Irrigation
+          ${escapeHtml(translationService.t("btn_control_irrig", "Control Precision Irrigation"))}
         </button>
       </div>
     `;
@@ -1158,6 +1383,23 @@ function renderZoneDetailsPage() {
   if (advCard) {
     advCard.className = currentZone.code === 'B2' ? 'advisory-card warning-left' : 'advisory-card';
   }
+
+  // Render Farmer Advisory in Zones Page
+  const zoneAdvisoryContainer = document.getElementById('zone-farmer-advisory-container');
+  if (zoneAdvisoryContainer) {
+    const exp = translationService.explainSoil(moisture, temp, light, currentZone.code);
+    const lang = translationService.getLanguage();
+    zoneAdvisoryContainer.innerHTML = renderFarmerAdvisoryHtml({
+      badge: lang === 'hi' ? `👨‍🌾 ज़ोन ${currentZone.code} किसान विवरण` : `👨‍🌾 ZONE ${currentZone.code} ADVISORY`,
+      title: lang === 'hi' ? `ज़ोन ${currentZone.code} — मिट्टी और फसल स्वास्थ्य स्थिति` : `Zone ${currentZone.code} — Soil & Crop Health Status`,
+      happening: exp.happening,
+      why: exp.why,
+      action: exp.action,
+      problem: exp.problem,
+      urgencyLabel: exp.urgencyLabel,
+      urgencyLevel: exp.urgency,
+    });
+  }
 }
 
 export function switchZoneDetail(zoneId) {
@@ -1256,6 +1498,65 @@ function renderAiAnalysisPage() {
     } else {
       imgEl.src = 'https://images.unsplash.com/photo-1592417817098-8f3d6910985c?w=1200&q=80';
     }
+  }
+
+  // Render AI Result + Farmer Explanation (preserving uncertainty)
+  const aiAdvisoryContainer = document.getElementById('ai-farmer-advisory-container');
+  if (aiAdvisoryContainer) {
+    const b1Twin = state.zoneTwins.find((t) => getZoneCode(t.zone_id) === 'B1') || state.zoneTwins[0];
+    const diseaseName = b1Twin?.ai?.disease || 'Early Blight (Alternaria solani)';
+    const confVal = b1Twin?.ai?.confidence || 0.914;
+    const stage = b1Twin?.ai?.growth_stage || 'Vegetative Stage (V3)';
+
+    const aiExp = translationService.explainAi({
+      disease_prediction: diseaseName,
+      confidence: confVal,
+      growth_stage: stage,
+    });
+    const lang = translationService.getLanguage();
+
+    aiAdvisoryContainer.innerHTML = `
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Technical Result Card -->
+        <div class="bento-card" style="padding: 1.5rem; border: 1px solid rgba(59, 130, 246, 0.35);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span class="text-label-sm" style="color: var(--agro-blue); font-weight: 700;">⚙️ TECHNICAL RESULT</span>
+            <span class="twin-badge warning">Edge-AI Vision v2.4</span>
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 1.125rem; color: var(--primary); margin-bottom: 0.5rem;">
+            ${escapeHtml(diseaseName)}
+          </h4>
+          <p style="font-size: 0.8125rem; color: var(--on-surface-variant); margin-bottom: 0.75rem;">
+            Confidence: <strong style="color: var(--agro-green);">${Math.round(confVal * 100)}%</strong> · Uncertainty Preserved
+          </p>
+          <div style="font-size: 0.75rem; color: var(--outline); line-height: 1.4;">
+            Multispectral leaf pathology indicates potential necrotic spots. Low humidity drip irrigation recommended.
+          </div>
+        </div>
+
+        <!-- Farmer Explanation Card -->
+        <div class="farmer-advisory-card urgency-high" style="margin-bottom: 0; padding: 1.5rem;">
+          <div class="farmer-advisory-header">
+            <div class="farmer-advisory-meta">
+              <span class="farmer-badge">👨‍🌾 ${translationService.t('farmer_view', 'Farmer View')} · ${lang.toUpperCase()}</span>
+              <span class="farmer-urgency-pill high">${escapeHtml(aiExp.stage)}</span>
+            </div>
+            <h4 class="farmer-advisory-title">${escapeHtml(aiExp.title)}</h4>
+          </div>
+          <p style="font-size: 0.875rem; color: var(--primary); margin-bottom: 0.75rem; line-height: 1.5;">
+            ${escapeHtml(aiExp.explanation)}
+          </p>
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+            <span style="font-size: 0.75rem; color: var(--agro-green); font-weight: 700; display: block; margin-bottom: 0.25rem;">
+              ${escapeHtml(translationService.t('what_to_do'))}
+            </span>
+            <p style="font-size: 0.8125rem; color: var(--primary); margin: 0; line-height: 1.4;">
+              ${escapeHtml(aiExp.advice)}
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
   }
 }
 
@@ -1365,6 +1666,51 @@ function renderIrrigationPage() {
 
   if (reachedBanner) {
     reachedBanner.style.display = (pct >= 100 && !isPumpActive) ? 'block' : 'none';
+  }
+
+  // Render Irrigation Farmer Explanation
+  const irrigAdvisoryContainer = document.getElementById('irrigation-farmer-advisory-container');
+  if (irrigAdvisoryContainer) {
+    const isFault = state.flowSimulation.pumpOn && state.flowSimulation.flowRate === 0;
+    const zCode = getZoneCode(state.flowSimulation.zoneId || activeTwin?.zone_id || 4);
+    const irrigExp = translationService.explainIrrigation(zCode, isPumpActive, flow, delivered, target, isFault);
+    const lang = translationService.getLanguage();
+
+    irrigAdvisoryContainer.innerHTML = `
+      <section class="farmer-advisory-card urgency-${irrigExp.urgency}" aria-label="Irrigation Farmer Advisory">
+        <div class="farmer-advisory-header">
+          <div class="farmer-advisory-meta">
+            <span class="farmer-badge">👨‍🌾 ${translationService.t('farmer_view', 'Farmer View')} · ${lang.toUpperCase()}</span>
+            <span class="farmer-urgency-pill ${irrigExp.urgency}">${isPumpActive ? (isFault ? 'FAULT' : 'ACTIVE') : 'STANDBY'}</span>
+          </div>
+          <h4 class="farmer-advisory-title">${escapeHtml(irrigExp.title)}</h4>
+        </div>
+        <div class="farmer-qa-grid">
+          <div class="farmer-qa-item">
+            <span class="farmer-qa-question">${escapeHtml(translationService.t('what_is_happening'))}</span>
+            <p class="farmer-qa-answer">${escapeHtml(irrigExp.detail)}</p>
+          </div>
+          <div class="farmer-qa-item">
+            <span class="farmer-qa-question">${escapeHtml(translationService.t('why_it_happens'))}</span>
+            <p class="farmer-qa-answer">
+              ${lang === 'hi' ? `ज़ोन ${zCode} में मिट्टी की नमी कम होने के कारण ड्रिप सिंचाई की आवश्यकता है।` :
+                lang === 'mr' ? `झोन ${zCode} मध्ये मातीत ओलावा कमी असल्यामुळे पाणी देणे आवश्यक आहे.` :
+                `Zone ${zCode} soil moisture dropped below threshold; precision drip triggered.`}
+            </p>
+          </div>
+          <div class="farmer-qa-item">
+            <span class="farmer-qa-question">${escapeHtml(translationService.t('what_to_do'))}</span>
+            <p class="farmer-qa-answer" style="color: var(--agro-green); font-weight: 600;">${escapeHtml(irrigExp.action)}</p>
+          </div>
+          <div class="farmer-qa-item">
+            <span class="farmer-qa-question">Water Flow Verified?</span>
+            <p class="farmer-qa-answer">
+              ${flow > 0 ? `✔ Verified: ${flow.toFixed(1)} L/min` : isPumpActive ? `❌ UNVERIFIED: Flow is 0.0 L/min` : `Idle`}
+            </p>
+          </div>
+        </div>
+      </section>
+    `;
   }
 
   renderIrrigationHistoryTable();
@@ -1492,8 +1838,27 @@ export async function runSimulateFlowFault() {
 
   if (faultBanner) {
     faultBanner.style.display = 'flex';
+    const lang = translationService.getLanguage();
     if (faultZoneText) {
-      faultZoneText.textContent = `Zone: ${b2Zone.code} · Irrigation: FAILED · Pump is ON but water flow is zero. High severity alert created in backend database.`;
+      if (lang === 'hi') {
+        faultZoneText.innerHTML = `<strong>ज़ोन ${b2Zone.code} · सिंचाई: FAILED</strong><br/>पंप चालू है, लेकिन पानी का प्रवाह नहीं मिल रहा है। कृपया पाइप, पंप और पानी की आपूर्ति जांचें।`;
+      } else if (lang === 'mr') {
+        faultZoneText.innerHTML = `<strong>झोन ${b2Zone.code} · पाणीपुरवठा: FAILED</strong><br/>पंप सुरू आहे, पण पाणी येत नाही. कृपया पाईप, पंप आणि पाणीपुरवठा तपासा.`;
+      } else if (lang === 'bn') {
+        faultZoneText.innerHTML = `<strong>জোন ${b2Zone.code} · সেচ: FAILED</strong><br/>পাম্প চালু আছে, কিন্তু পানি আসছে না। অনুগ্রহ করে পাইপ, পাম্প এবং পানির উৎস পরীক্ষা করুন।`;
+      } else if (lang === 'te') {
+        faultZoneText.innerHTML = `<strong>జోన్ ${b2Zone.code} · నీటిపారుదల: FAILED</strong><br/>పంప్ నడుస్తోంది, కానీ నీరు రావడం లేదు. దయచేసి పైపులు, పంప్ మరియు నీటి సరఫరాను తనిખీ చేయండి.`;
+      } else if (lang === 'ta') {
+        faultZoneText.innerHTML = `<strong>பிரிவு ${b2Zone.code} · பாசனம்: FAILED</strong><br/>மோட்டார் ஓடுகிறது, ஆனால் தண்ணீர் வரவில்லை. பைப்லைன் மற்றும் தண்ணீர் இணைப்பை சரிபார்க்கவும்.`;
+      } else if (lang === 'kn') {
+        faultZoneText.innerHTML = `<strong>ವಲಯ ${b2Zone.code} · ನೀರಾವರಿ: FAILED</strong><br/>ಪಂಪ್ ಚಾಲನೆಯಲ್ಲಿದೆ, ಆದರೆ ನೀರು ಬರುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಪೈಪ್ ಮತ್ತು ಪಂಪ್ ಪರಿಶೀಲಿಸಿ.`;
+      } else if (lang === 'gu') {
+        faultZoneText.innerHTML = `<strong>ઝોન ${b2Zone.code} · પિયત: FAILED</strong><br/>પંપ ચાલુ છે, પરંતુ પાણી નથી આવતું. કૃપા કરીને પાઇપ અને પંપ તપાસો.`;
+      } else if (lang === 'pa') {
+        faultZoneText.innerHTML = `<strong>ਜ਼ੋਨ ${b2Zone.code} · ਸਿੰਚਾਈ: FAILED</strong><br/>ਪੰਪ ਚੱਲ ਰਿਹਾ ਹੈ, ਪਰ ਪਾਣੀ ਨਹੀਂ ਆ ਰਿਹਾ। ਕਿਰਪਾ ਕਰਕੇ ਪਾਈਪਾਂ ਅਤੇ ਪੰਪ ਦੀ ਜਾਂਚ ਕਰੋ।`;
+      } else {
+        faultZoneText.innerHTML = `<strong>Zone: ${b2Zone.code} · Irrigation: FAILED</strong><br/>Pump is ON but water flow is zero. Please inspect pipes, pump intake, and water supply.`;
+      }
     }
   }
 

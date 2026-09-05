@@ -507,6 +507,159 @@ img {
   display: inline-block;
 }
 
+/* Language Selector Dropdown */
+.language-selector-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.language-select-nav {
+  height: 2.25rem;
+  background: var(--nav-btn-bg);
+  border: 1px solid var(--nav-btn-border);
+  border-radius: 9999px;
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.375rem 1.85rem 0.375rem 0.875rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238e9192' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.language-select-nav:hover {
+  border-color: var(--nav-btn-border-hover);
+  background: var(--nav-btn-hover);
+}
+
+.language-select-nav option {
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+/* Farmer View / Technical View Switcher Pill */
+.view-mode-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.25rem;
+  background: var(--nav-btn-bg);
+  border: 1px solid var(--nav-btn-border);
+  border-radius: 9999px;
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.375rem 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--transition-base), background var(--transition-base), transform var(--transition-fast);
+}
+
+.view-mode-toggle-btn:hover {
+  border-color: var(--nav-btn-border-hover);
+  background: var(--nav-btn-hover);
+  transform: scale(1.02);
+}
+
+.view-mode-toggle-btn.farmer-active {
+  border-color: rgba(74, 222, 128, 0.45);
+  background: rgba(74, 222, 128, 0.08);
+}
+
+:root[data-theme="light"] .view-mode-toggle-btn.farmer-active {
+  border-color: rgba(21, 128, 61, 0.4);
+  background: rgba(21, 128, 61, 0.08);
+}
+
+.view-mode-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* Farmer Advisory Card Component */
+.farmer-advisory-card {
+  background: var(--surface-container-low);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--agro-green);
+  box-shadow: var(--card-shadow);
+  transition: all var(--transition-base);
+}
+
+.farmer-advisory-card.warning {
+  border-left-color: var(--agro-amber);
+}
+
+.farmer-advisory-card.critical {
+  border-left-color: var(--agro-red);
+}
+
+.farmer-advisory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.farmer-advisory-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.farmer-qa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .farmer-qa-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.farmer-qa-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.125rem 1.25rem;
+}
+
+.farmer-qa-q {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.farmer-qa-a {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--on-surface);
+  font-weight: 500;
+}
+
 /* Fullscreen Kinetic Menu Overlay */
 .fullscreen-menu-container {
   position: relative;
