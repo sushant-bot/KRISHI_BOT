@@ -44,13 +44,15 @@ async def lifespan(app: FastAPI):
 settings = get_settings()
 app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
 
-cors_origins = settings.cors_origin_list
-allow_all = "*" in cors_origins
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if allow_all else cors_origins,
-    allow_credentials=not allow_all,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://krishi-26r90rpcl-sushant-bots-projects.vercel.app",
+        "https://krishibot-wheat.vercel.app"
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
