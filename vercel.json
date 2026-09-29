@@ -3,36 +3,24 @@
   "services": {
     "frontend": {
       "root": "frontend/"
-    },
-    "backend": {
-      "root": "backend/",
-      "entrypoint": "app.main:app"
     }
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": {
-        "service": "backend"
-      }
+      "destination": "https://krishi-bot-uypg.onrender.com/api/$1"
     },
     {
       "source": "/docs",
-      "destination": {
-        "service": "backend"
-      }
+      "destination": "https://krishi-bot-uypg.onrender.com/docs"
     },
     {
       "source": "/openapi.json",
-      "destination": {
-        "service": "backend"
-      }
+      "destination": "https://krishi-bot-uypg.onrender.com/openapi.json"
     },
     {
       "source": "/redoc",
-      "destination": {
-        "service": "backend"
-      }
+      "destination": "https://krishi-bot-uypg.onrender.com/redoc"
     },
     {
       "source": "/(.*)",

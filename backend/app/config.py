@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     app_name: str = "AgroVisor Edge API"
     environment: str = "development"
     database_url: str = "sqlite:///./agrovisor.db"
-    cors_origins: str = "http://localhost:3000,http://localhost:5173"
+    cors_origins: str = "*"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
