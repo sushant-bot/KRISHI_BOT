@@ -3,7 +3,7 @@
  * Wraps fetch() calls to the FastAPI backend.
  */
 
-const API_BASE = '/api';
+export const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 
 /** Build request headers */
 function headers(extra = {}) {

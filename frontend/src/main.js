@@ -7,6 +7,7 @@
 
 import gsap from 'gsap';
 import {
+  API_BASE,
   checkHealth,
   getFarms,
   getFarm,
@@ -59,6 +60,10 @@ const state = {
 
 // ──────────── Lifecycle Initialization ────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  const docsLink = document.getElementById('api-docs-link');
+  if (docsLink && API_BASE.startsWith('http')) {
+    docsLink.href = `${API_BASE.replace(/\/api$/, '')}/docs`;
+  }
   initTheme();
   initLanguageAndViews();
   initScrollEffects();
@@ -455,7 +460,7 @@ async function checkConnection() {
     state.apiError = null;
     if (dot) dot.className = 'connection-dot connected';
     if (label) {
-      label.textContent = 'API Connected';
+      label.textContent = API_BASE.startsWith('http') ? 'Cloud API' : 'API Connected';
       label.style.color = 'var(--agro-green)';
     }
   } catch (err) {
