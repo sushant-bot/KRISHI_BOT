@@ -25,15 +25,32 @@ from app.services.farm import ConflictError, NotFoundError
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    try:
+        from app.database import SessionLocal
+        from app.models.farm import Farm
+        from seed_demo_data import seed
+
+        db = SessionLocal()
+        try:
+            if db.query(Farm).count() == 0:
+                seed()
+        finally:
+            db.close()
+    except Exception:
+        pass
     yield
 
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+
+cors_origins = settings.cors_origin_list
+allow_all = "*" in cors_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origin_list,
-    allow_credentials=True,
+    allow_origins=["*"] if allow_all else cors_origins,
+    allow_credentials=not allow_all,
     allow_methods=["*"],
     allow_headers=["*"],
 )

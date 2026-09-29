@@ -20,13 +20,16 @@ class Settings(BaseSettings):
 
     @property
     def resolved_database_url(self) -> str:
-        if self.database_url.startswith("sqlite:///"):
-            raw_path = self.database_url[len("sqlite:///"):]
+        url = self.database_url
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        if url.startswith("sqlite:///"):
+            raw_path = url[len("sqlite:///"):]
             path_obj = Path(raw_path)
             if not path_obj.is_absolute():
                 abs_path = (BACKEND_DIR / path_obj).resolve().as_posix()
                 return f"sqlite:///{abs_path}"
-        return self.database_url
+        return url
 
 
 @lru_cache
