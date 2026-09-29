@@ -2,7 +2,7 @@
  * AgroVisor Edge — Main Application & Kinetic Navigation Engine
  * Vanilla JS + GSAP + Vite Architecture.
  * Strictly preserves the Scholaris Dark Monochromatic design language.
- * Backend Target: http://127.0.0.1:8001 (via Vite /api proxy)
+ * Backend Target: /api (via Vite proxy or Vercel rewrite)
  */
 
 import gsap from 'gsap';
@@ -455,18 +455,18 @@ async function checkConnection() {
     state.apiError = null;
     if (dot) dot.className = 'connection-dot connected';
     if (label) {
-      label.textContent = '127.0.0.1:8001';
+      label.textContent = 'API Connected';
       label.style.color = 'var(--agro-green)';
     }
   } catch (err) {
     state.connected = false;
-    state.apiError = 'Backend unreachable on http://127.0.0.1:8001';
+    state.apiError = 'Backend API is currently unreachable';
     if (dot) dot.className = 'connection-dot error';
     if (label) {
-      label.textContent = 'Offline (8001)';
+      label.textContent = 'Offline';
       label.style.color = 'var(--agro-red)';
     }
-    showToast('Cannot reach AgroVisor backend on port 8001', 'error');
+    showToast('Cannot reach AgroVisor backend service', 'error');
   }
 }
 
@@ -2036,7 +2036,7 @@ function renderOfflineBanner(viewId) {
   banner.innerHTML = `
     <div style="display: flex; align-items: center; gap: 0.75rem;">
       <span class="material-symbols-outlined">wifi_off</span>
-      <span style="font-size: 0.875rem; font-weight: 600;">Offline Mode: Backend at http://127.0.0.1:8001 is unreachable. Retrying...</span>
+      <span style="font-size: 0.875rem; font-weight: 600;">Offline Mode: Backend service is currently unreachable. Retrying...</span>
     </div>
     <button class="btn-outline" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;" onclick="loadDashboard()">Retry Connection</button>
   `;
